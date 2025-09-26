@@ -19,7 +19,7 @@ namespace SchoolManagementSystem.Controllers
         public async Task<IActionResult> Index(DateTime? date, int? courseId)
         {
             var attendanceDate = date ?? DateTime.Today;
-            
+
             var query = _context.Attendances
                 .Include(a => a.Student)
                 .Include(a => a.Course)
@@ -57,7 +57,7 @@ namespace SchoolManagementSystem.Controllers
             }
 
             var attendanceDate = date ?? DateTime.Today;
-            
+
             var course = await _context.Courses
                 .Include(c => c.Subject)
                 .Include(c => c.Teacher)
@@ -85,7 +85,7 @@ namespace SchoolManagementSystem.Controllers
                 .ToList();
 
             var attendanceList = new List<Attendance>();
-            
+
             foreach (var student in enrolledStudents)
             {
                 var existingRecord = existingAttendance.FirstOrDefault(a => a.StudentId == student.Id);
@@ -131,8 +131,8 @@ namespace SchoolManagementSystem.Controllers
 
                 // Check if record already exists
                 var existingRecord = await _context.Attendances
-                    .FirstOrDefaultAsync(a => a.StudentId == attendance.StudentId && 
-                                           a.CourseId == courseId && 
+                    .FirstOrDefaultAsync(a => a.StudentId == attendance.StudentId &&
+                                           a.CourseId == courseId &&
                                            a.AttendanceDate.Date == attendanceDate.Date);
 
                 if (existingRecord != null)
@@ -176,8 +176,8 @@ namespace SchoolManagementSystem.Controllers
             var attendances = await _context.Attendances
                 .Include(a => a.Course)
                 .ThenInclude(c => c!.Subject)
-                .Where(a => a.StudentId == id && 
-                           a.AttendanceDate >= start && 
+                .Where(a => a.StudentId == id &&
+                           a.AttendanceDate >= start &&
                            a.AttendanceDate <= end)
                 .OrderByDescending(a => a.AttendanceDate)
                 .ThenBy(a => a.Course!.CourseName)
@@ -191,7 +191,7 @@ namespace SchoolManagementSystem.Controllers
             ViewBag.LateDays = attendances.Count(a => a.Status == "Late");
             ViewBag.AbsentDays = attendances.Count(a => a.Status == "Absent");
             ViewBag.ExcusedDays = attendances.Count(a => a.Status == "Excused");
-            ViewBag.AttendanceRate = attendances.Count > 0 ? 
+            ViewBag.AttendanceRate = attendances.Count > 0 ?
                 Math.Round(((double)attendances.Count(a => a.IsPresent) / attendances.Count) * 100, 1) : 0;
 
             return View(attendances);
@@ -220,8 +220,8 @@ namespace SchoolManagementSystem.Controllers
 
             var attendances = await _context.Attendances
                 .Include(a => a.Student)
-                .Where(a => a.CourseId == id && 
-                           a.AttendanceDate >= start && 
+                .Where(a => a.CourseId == id &&
+                           a.AttendanceDate >= start &&
                            a.AttendanceDate <= end)
                 .OrderByDescending(a => a.AttendanceDate)
                 .ThenBy(a => a.Student!.LastName)
@@ -271,7 +271,7 @@ namespace SchoolManagementSystem.Controllers
 
             ViewBag.StartDate = start;
             ViewBag.EndDate = end;
-            ViewBag.OverallAttendanceRate = attendanceSummary.Any() ? 
+            ViewBag.OverallAttendanceRate = attendanceSummary.Any() ?
                 Math.Round(attendanceSummary.Average(s => s.AttendanceRate), 1) : 0;
 
             return View(attendanceSummary);
@@ -330,13 +330,13 @@ namespace SchoolManagementSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index), new { date = attendance.AttendanceDate });
             }
-            
+
             // Reload navigation properties for view
             attendance.Student = await _context.Students.FindAsync(attendance.StudentId);
             attendance.Course = await _context.Courses
                 .Include(c => c.Subject)
                 .FirstOrDefaultAsync(c => c.Id == attendance.CourseId);
-            
+
             return View(attendance);
         }
 
