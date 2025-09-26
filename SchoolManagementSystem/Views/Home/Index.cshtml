@@ -1,0 +1,368 @@
+﻿@model SchoolManagementSystem.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-tachometer-alt"></i> School Management Dashboard</h2>
+                <div class="text-muted">
+                    <i class="fas fa-calendar"></i> @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="card-title mb-1">@Model.TotalStudents</h4>
+                                    <p class="card-text mb-0">Total Students</p>
+                                </div>
+                                <div class="fs-1 opacity-50">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-dark bg-opacity-25">
+                            <a href="/Students" class="text-white text-decoration-none">
+                                <small><i class="fas fa-arrow-right"></i> View All Students</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-success text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="card-title mb-1">@Model.TotalTeachers</h4>
+                                    <p class="card-text mb-0">Total Teachers</p>
+                                </div>
+                                <div class="fs-1 opacity-50">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-dark bg-opacity-25">
+                            <a href="/Teachers" class="text-white text-decoration-none">
+                                <small><i class="fas fa-arrow-right"></i> View All Teachers</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-info text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="card-title mb-1">@Model.ActiveCourses</h4>
+                                    <p class="card-text mb-0">Active Courses</p>
+                                    <small>@Model.TotalCourses total</small>
+                                </div>
+                                <div class="fs-1 opacity-50">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-dark bg-opacity-25">
+                            <a href="/Courses" class="text-white text-decoration-none">
+                                <small><i class="fas fa-arrow-right"></i> View All Courses</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="card-title mb-1">@Model.TotalEnrollments</h4>
+                                    <p class="card-text mb-0">Total Enrollments</p>
+                                </div>
+                                <div class="fs-1 opacity-50">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-dark bg-opacity-25">
+                            <span class="text-white">
+                                <small><i class="fas fa-info-circle"></i> Course Registrations</small>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Row -->
+            <div class="row g-4">
+                <!-- Recent Students -->
+                <div class="col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-plus text-primary"></i> Recent Students
+                                <span class="badge bg-primary ms-2">Last 30 days</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.RecentStudents.Any())
+                            {
+                                <div class="list-group list-group-flush">
+                                    @foreach (var student in Model.RecentStudents)
+                                    {
+                                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                            <div>
+                                                <strong>@student.FullName</strong>
+                                                <br>
+                                                <small class="text-muted">@student.StudentId • @student.Email</small>
+                                            </div>
+                                            <div class="text-end">
+                                                <small class="text-muted">@student.EnrollmentDate.ToString("MMM dd")</small>
+                                                <br>
+                                                <a href="/Students/Details/@student.Id" class="btn btn-sm btn-outline-primary">View</a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-user-plus fa-2x mb-2"></i>
+                                    <p>No recent enrollments</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <a href="/Students" class="btn btn-primary btn-sm">
+                                <i class="fas fa-users"></i> View All Students
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular Courses -->
+                <div class="col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-fire text-danger"></i> Popular Courses
+                                <span class="badge bg-info ms-2">By enrollment</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.PopularCourses.Any())
+                            {
+                                <div class="list-group list-group-flush">
+                                    @foreach (var course in Model.PopularCourses)
+                                    {
+                                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                            <div>
+                                                <strong>@course.FullCourseName</strong>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-chalkboard-teacher"></i> @course.Teacher?.FullName
+                                                </small>
+                                            </div>
+                                            <div class="text-end">
+                                                <span class="badge bg-success">@course.EnrolledCount enrolled</span>
+                                                <br>
+                                                <small class="text-muted">@course.Credits credits</small>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-book fa-2x mb-2"></i>
+                                    <p>No courses available</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <a href="/Courses" class="btn btn-info btn-sm">
+                                <i class="fas fa-book"></i> View All Courses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Attendance -->
+                <div class="col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar-check text-success"></i> Today's Attendance
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.TodayAttendance.TotalRecorded > 0)
+                            {
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="border rounded p-3 mb-3 bg-light">
+                                            <h3 class="text-success mb-1">@Model.TodayAttendance.AttendanceRate%</h3>
+                                            <small class="text-muted">Attendance Rate</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="border rounded p-3 mb-3 bg-light">
+                                            <h3 class="text-primary mb-1">@Model.TodayAttendance.TotalRecorded</h3>
+                                            <small class="text-muted">Total Records</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="d-flex justify-content-between">
+                                            <span><i class="fas fa-check-circle text-success"></i> Present</span>
+                                            <strong>@Model.TodayAttendance.Present</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex justify-content-between">
+                                            <span><i class="fas fa-times-circle text-danger"></i> Absent</span>
+                                            <strong>@Model.TodayAttendance.Absent</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex justify-content-between">
+                                            <span><i class="fas fa-clock text-warning"></i> Late</span>
+                                            <strong>@Model.TodayAttendance.Late</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex justify-content-between">
+                                            <span><i class="fas fa-user-shield text-info"></i> Excused</span>
+                                            <strong>@Model.TodayAttendance.Excused</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                                    <p>No attendance recorded today</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <a href="/Attendance" class="btn btn-success btn-sm">
+                                <i class="fas fa-calendar-check"></i> Manage Attendance
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Grades -->
+                <div class="col-lg-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-medal text-warning"></i> Recent Grades
+                                @if (Model.AverageGPA.HasValue)
+                                {
+                                    <span class="badge bg-warning ms-2">Avg GPA: @Model.AverageGPA.Value</span>
+                                }
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.RecentGrades.Any())
+                            {
+                                <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                                    @foreach (var grade in Model.RecentGrades.Take(8))
+                                    {
+                                        <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+                                            <div>
+                                                <strong>@grade.Student?.FullName</strong>
+                                                <br>
+                                                <small class="text-muted">@grade.Course?.CourseCode - @grade.AssignmentName</small>
+                                            </div>
+                                            <div class="text-end">
+                                                @if (grade.NumericGrade.HasValue)
+                                                {
+                                                    <span class="badge bg-@grade.GradeColor">@grade.NumericGrade.Value%</span>
+                                                    <br>
+                                                    <small class="text-muted">@grade.GetLetterGrade()</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">N/A</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-medal fa-2x mb-2"></i>
+                                    <p>No recent grades</p>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <a href="/Grades" class="btn btn-warning btn-sm">
+                                <i class="fas fa-medal"></i> Manage Grades
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <a href="/Students/Create" class="btn btn-primary w-100">
+                                        <i class="fas fa-user-plus"></i><br>Add Student
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/Teachers/Create" class="btn btn-success w-100">
+                                        <i class="fas fa-chalkboard-teacher"></i><br>Add Teacher
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/Courses/Create" class="btn btn-info w-100">
+                                        <i class="fas fa-book-open"></i><br>Create Course
+                                    </a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="/Attendance/Record" class="btn btn-warning w-100">
+                                        <i class="fas fa-clipboard-check"></i><br>Record Attendance
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

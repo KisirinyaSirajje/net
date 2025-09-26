@@ -1,0 +1,297 @@
+@model SchoolManagementSystem.Models.Student
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="fas fa-user text-info me-2"></i>
+                    Student Details
+                </h2>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning me-2">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to List
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Personal Information Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-user-circle me-2"></i>Personal Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted">Student ID</label>
+                                        <div class="fw-bold fs-5">
+                                            <span class="badge bg-primary fs-6">@Html.DisplayFor(model => model.StudentId)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted">Full Name</label>
+                                        <div class="fw-bold fs-5">@Html.DisplayFor(model => model.FullName)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted">
+                                            <i class="fas fa-envelope me-1"></i>Email
+                                        </label>
+                                        <div>
+                                            <a href="mailto:@Model.Email" class="text-decoration-none">
+                                                @Html.DisplayFor(model => model.Email)
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted">
+                                            <i class="fas fa-phone me-1"></i>Phone Number
+                                        </label>
+                                        <div>
+                                            @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                                            {
+                                                @Html.DisplayFor(model => model.PhoneNumber)
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not provided</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted">
+                                            <i class="fas fa-birthday-cake me-1"></i>Date of Birth
+                                        </label>
+                                        <div>
+                                            @if (Model.DateOfBirth.HasValue)
+                                            {
+                                                @Model.DateOfBirth.Value.ToString("MMMM dd, yyyy")
+                                                <small class="text-muted ms-2">
+                                                    (Age: @((DateTime.Now - Model.DateOfBirth.Value).Days / 365) years)
+                                                </small>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not provided</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label text-muted">
+                                            <i class="fas fa-calendar-plus me-1"></i>Enrollment Date
+                                        </label>
+                                        <div>@Model.EnrollmentDate.ToString("MMMM dd, yyyy")</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.Address))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>Address
+                                    </label>
+                                    <div>@Html.DisplayFor(model => model.Address)</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Academic Information Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-graduation-cap me-2"></i>Academic Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <div class="display-6 fw-bold text-success">
+                                            @if (Model.CourseEnrollments?.Any() == true)
+                                            {
+                                                @Model.CourseEnrollments.Count()
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </div>
+                                        <small class="text-muted">Enrolled Courses</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <div class="display-6 fw-bold text-info">
+                                            @if (Model.GPA.HasValue)
+                                            {
+                                                @Model.GPA.Value.ToString("F2")
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">N/A</span>
+                                            }
+                                        </div>
+                                        <small class="text-muted">Current GPA</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <div class="display-6 fw-bold text-warning">
+                                            @if (Model.Grades?.Any() == true)
+                                            {
+                                                @Model.Grades.Count()
+                                            }
+                                            else
+                                            {
+                                                <span>0</span>
+                                            }
+                                        </div>
+                                        <small class="text-muted">Total Grades</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Quick Actions Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-cogs me-2"></i>Quick Actions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning">
+                                    <i class="fas fa-edit me-2"></i>Edit Student
+                                </a>
+                                <a asp-controller="Courses" asp-action="Enroll" asp-route-studentId="@Model.Id" class="btn btn-outline-success">
+                                    <i class="fas fa-book-open me-2"></i>Enroll in Course
+                                </a>
+                                <a asp-controller="Grades" asp-action="Create" asp-route-studentId="@Model.Id" class="btn btn-outline-info">
+                                    <i class="fas fa-plus me-2"></i>Add Grade
+                                </a>
+                                <a asp-controller="Attendance" asp-action="Index" asp-route-studentId="@Model.Id" class="btn btn-outline-secondary">
+                                    <i class="fas fa-calendar-check me-2"></i>View Attendance
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enrolled Courses Card -->
+                    @if (Model.CourseEnrollments?.Any() == true)
+                    {
+                        <div class="card shadow mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-books me-2"></i>Enrolled Courses
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var enrollment in Model.CourseEnrollments)
+                                {
+                                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                        <div>
+                                            <strong>@enrollment.Course?.CourseName</strong>
+                                            <br>
+                                            <small class="text-muted">@enrollment.Course?.CourseCode</small>
+                                        </div>
+                                        <span class="badge bg-success">
+                                            @enrollment.Course?.Credits Credits
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card shadow">
+                            <div class="card-body text-center">
+                                <i class="fas fa-book-open fa-2x text-muted mb-3"></i>
+                                <h6 class="text-muted">No Courses Enrolled</h6>
+                                <p class="text-muted small">This student is not currently enrolled in any courses.</p>
+                                <a asp-controller="Courses" asp-action="Enroll" asp-route-studentId="@Model.Id" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-plus me-1"></i>Enroll Now
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Students
+                        </a>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                                <i class="fas fa-edit me-1"></i>Edit Student
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
+                                <i class="fas fa-trash me-1"></i>Delete Student
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .display-6 {
+        font-size: 3rem;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .badge {
+        font-size: 0.8em;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+</style>

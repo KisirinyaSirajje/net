@@ -1,0 +1,293 @@
+@model SchoolManagementSystem.Models.Course
+
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-book-open text-primary me-2"></i>Create New Course</h2>
+                    <p class="text-muted mb-0">Add a new course to the curriculum</p>
+                </div>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Courses
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>Course Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" id="courseForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        
+                        <!-- Basic Course Information -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="CourseCode" class="form-label fw-bold">
+                                        <i class="fas fa-code me-1"></i>Course Code *
+                                    </label>
+                                    <input asp-for="CourseCode" class="form-control" placeholder="e.g., CS101" maxlength="10" required />
+                                    <span asp-validation-for="CourseCode" class="text-danger small"></span>
+                                    <div class="form-text">Unique identifier for the course (e.g., CS101, MATH201)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Credits" class="form-label fw-bold">
+                                        <i class="fas fa-trophy me-1"></i>Credits *
+                                    </label>
+                                    <input asp-for="Credits" class="form-control" type="number" min="1" max="10" placeholder="3" required />
+                                    <span asp-validation-for="Credits" class="text-danger small"></span>
+                                    <div class="form-text">Number of credit hours (1-10)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CourseName" class="form-label fw-bold">
+                                <i class="fas fa-book me-1"></i>Course Name *
+                            </label>
+                            <input asp-for="CourseName" class="form-control" placeholder="e.g., Introduction to Computer Science" maxlength="200" required />
+                            <span asp-validation-for="CourseName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1"></i>Description
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="4" 
+                                placeholder="Enter a detailed description of the course content, objectives, and prerequisites..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Instructor Assignment -->
+                        <div class="form-group mb-4">
+                            <label asp-for="TeacherId" class="form-label fw-bold">
+                                <i class="fas fa-chalkboard-teacher me-1"></i>Assigned Teacher *
+                            </label>
+                            <select asp-for="TeacherId" class="form-select" asp-items="ViewBag.TeacherId" required>
+                                <option value="">-- Select a Teacher --</option>
+                            </select>
+                            <span asp-validation-for="TeacherId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Schedule Information -->
+                        <div class="card border-0 bg-light mb-4">
+                            <div class="card-header bg-transparent border-0">
+                                <h6 class="card-title mb-0 text-primary">
+                                    <i class="fas fa-calendar-alt me-2"></i>Schedule & Logistics
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label asp-for="StartDate" class="form-label fw-bold">
+                                            <i class="fas fa-play me-1"></i>Start Date *
+                                        </label>
+                                        <input asp-for="StartDate" class="form-control" type="date" required />
+                                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="EndDate" class="form-label fw-bold">
+                                            <i class="fas fa-stop me-1"></i>End Date
+                                        </label>
+                                        <input asp-for="EndDate" class="form-control" type="date" />
+                                        <span asp-validation-for="EndDate" class="text-danger small"></span>
+                                        <div class="form-text">Leave blank for ongoing courses</div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label asp-for="MaxEnrollment" class="form-label fw-bold">
+                                            <i class="fas fa-users me-1"></i>Max Students
+                                        </label>
+                                        <input asp-for="MaxEnrollment" class="form-control" type="number" min="1" max="200" placeholder="30" />
+                                        <span asp-validation-for="MaxEnrollment" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="Room" class="form-label fw-bold">
+                                            <i class="fas fa-door-open me-1"></i>Room
+                                        </label>
+                                        <input asp-for="Room" class="form-control" placeholder="e.g., Room 101" maxlength="50" />
+                                        <span asp-validation-for="Room" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="DaysOfWeek" class="form-label fw-bold">
+                                            <i class="fas fa-calendar-week me-1"></i>Days of Week
+                                        </label>
+                                        <input asp-for="DaysOfWeek" class="form-control" placeholder="e.g., Mon, Wed, Fri" maxlength="50" />
+                                        <span asp-validation-for="DaysOfWeek" class="text-danger small"></span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label asp-for="StartTime" class="form-label fw-bold">
+                                            <i class="fas fa-clock me-1"></i>Start Time
+                                        </label>
+                                        <input asp-for="StartTime" class="form-control" type="time" />
+                                        <span asp-validation-for="StartTime" class="text-danger small"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="EndTime" class="form-label fw-bold">
+                                            <i class="fas fa-clock me-1"></i>End Time
+                                        </label>
+                                        <input asp-for="EndTime" class="form-control" type="time" />
+                                        <span asp-validation-for="EndTime" class="text-danger small"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-save me-2"></i>Create Course
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #4e73df, #36b9cc);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #3c5bc7, #2a9bb8);
+    transform: translateY(-1px);
+}
+
+@@media (max-width: 768px) {
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+    
+    .d-flex.gap-3 .btn {
+        width: 100%;
+    }
+}
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('courseForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Form validation and submission
+        form.addEventListener('submit', function(e) {
+            const startDate = document.querySelector('input[name="StartDate"]').value;
+            const endDate = document.querySelector('input[name="EndDate"]').value;
+            
+            // Validate date range
+            if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+                e.preventDefault();
+                alert('End date must be after the start date.');
+                return;
+            }
+            
+            // Validate time range
+            const startTime = document.querySelector('input[name="StartTime"]').value;
+            const endTime = document.querySelector('input[name="EndTime"]').value;
+            
+            if (startTime && endTime && startTime >= endTime) {
+                e.preventDefault();
+                alert('End time must be after the start time.');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating Course...';
+            submitBtn.disabled = true;
+        });
+        
+        // Auto-generate course code suggestion based on course name
+        const courseNameInput = document.querySelector('input[name="CourseName"]');
+        const courseCodeInput = document.querySelector('input[name="CourseCode"]');
+        
+        courseNameInput.addEventListener('input', function() {
+            if (!courseCodeInput.value) {
+                const words = this.value.split(' ').filter(word => word.length > 0);
+                if (words.length > 0) {
+                    let suggestion = '';
+                    if (words.length === 1) {
+                        suggestion = words[0].substring(0, 3).toUpperCase() + '101';
+                    } else {
+                        suggestion = words.map(word => word.charAt(0)).join('').toUpperCase();
+                        if (suggestion.length < 3) {
+                            suggestion += '101';
+                        } else {
+                            suggestion = suggestion.substring(0, 3) + '101';
+                        }
+                    }
+                    courseCodeInput.placeholder = `Suggested: ${suggestion}`;
+                }
+            }
+        });
+        
+        // Set default start date to next Monday
+        const startDateInput = document.querySelector('input[name="StartDate"]');
+        if (!startDateInput.value) {
+            const nextMonday = new Date();
+            nextMonday.setDate(nextMonday.getDate() + (1 + 7 - nextMonday.getDay()) % 7);
+            startDateInput.value = nextMonday.toISOString().split('T')[0];
+        }
+        
+        // Auto-dismiss alerts
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                if (alert.querySelector('.btn-close')) {
+                    alert.querySelector('.btn-close').click();
+                }
+            });
+        }, 5000);
+    });
+    </script>
+}

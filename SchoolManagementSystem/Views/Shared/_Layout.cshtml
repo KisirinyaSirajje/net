@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SchoolManagementSystem</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SchoolManagementSystem.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-graduation-cap"></i> School Management System
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="studentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-users"></i> Students
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="studentsDropdown">
+                                <li><a class="dropdown-item" asp-controller="Students" asp-action="Index"><i class="fas fa-list"></i> All Students</a></li>
+                                <li><a class="dropdown-item" asp-controller="Students" asp-action="Create"><i class="fas fa-plus"></i> Add Student</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="teachersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-chalkboard-teacher"></i> Teachers
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="teachersDropdown">
+                                <li><a class="dropdown-item" asp-controller="Teachers" asp-action="Index"><i class="fas fa-list"></i> All Teachers</a></li>
+                                <li><a class="dropdown-item" asp-controller="Teachers" asp-action="Create"><i class="fas fa-plus"></i> Add Teacher</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-book"></i> Courses
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
+                                <li><a class="dropdown-item" asp-controller="Courses" asp-action="Index"><i class="fas fa-list"></i> All Courses</a></li>
+                                <li><a class="dropdown-item" asp-controller="Courses" asp-action="Create"><i class="fas fa-plus"></i> Add Course</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="academicDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-calendar-check"></i> Academic
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="academicDropdown">
+                                <li><a class="dropdown-item" asp-controller="Attendance" asp-action="Index"><i class="fas fa-user-check"></i> Attendance</a></li>
+                                <li><a class="dropdown-item" asp-controller="Grades" asp-action="Index"><i class="fas fa-medal"></i> Grades</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - SchoolManagementSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

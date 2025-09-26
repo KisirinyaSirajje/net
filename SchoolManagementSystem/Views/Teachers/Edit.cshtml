@@ -1,0 +1,328 @@
+@model SchoolManagementSystem.Models.Teacher
+
+@{
+    ViewData["Title"] = "Edit Teacher";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">
+                                <i class="fas fa-edit me-2"></i>Edit Teacher
+                            </h4>
+                            <small class="opacity-75">Update teacher information</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-light text-dark">ID: @Model.EmployeeId</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" class="needs-validation" novalidate>
+                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="EmployeeId" type="hidden" />
+                        
+                        <div class="row">
+                            <!-- Personal Information -->
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-user me-2"></i>Personal Information
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="FirstName" class="form-label fw-bold">
+                                        First Name <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input asp-for="FirstName" class="form-control" 
+                                               placeholder="Enter first name" />
+                                    </div>
+                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="LastName" class="form-label fw-bold">
+                                        Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input asp-for="LastName" class="form-control" 
+                                               placeholder="Enter last name" />
+                                    </div>
+                                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Email" class="form-label fw-bold">
+                                        Email Address <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                        <input asp-for="Email" type="email" class="form-control" 
+                                               placeholder="teacher@school.edu" />
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="PhoneNumber" class="form-label fw-bold">
+                                        Phone Number
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-phone"></i>
+                                        </span>
+                                        <input asp-for="PhoneNumber" type="tel" class="form-control" 
+                                               placeholder="(555) 123-4567" />
+                                    </div>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Address" class="form-label fw-bold">
+                                        Address
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </span>
+                                        <textarea asp-for="Address" class="form-control" rows="3" 
+                                                  placeholder="Enter complete address"></textarea>
+                                    </div>
+                                    <span asp-validation-for="Address" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <!-- Professional Information -->
+                            <div class="col-md-6">
+                                <h5 class="text-success mb-3">
+                                    <i class="fas fa-briefcase me-2"></i>Professional Information
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label asp-for="Department" class="form-label fw-bold">
+                                        Department <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-building"></i>
+                                        </span>
+                                        <select asp-for="Department" class="form-select">
+                                            <option value="">Select Department</option>
+                                            <option value="Mathematics">Mathematics</option>
+                                            <option value="Science">Science</option>
+                                            <option value="English">English</option>
+                                            <option value="History">History</option>
+                                            <option value="Physical Education">Physical Education</option>
+                                            <option value="Art">Art</option>
+                                            <option value="Music">Music</option>
+                                            <option value="Computer Science">Computer Science</option>
+                                            <option value="Foreign Languages">Foreign Languages</option>
+                                            <option value="Business">Business</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="Department" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Specialization" class="form-label fw-bold">
+                                        Specialization
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </span>
+                                        <input asp-for="Specialization" class="form-control" 
+                                               placeholder="e.g., Algebra, Biology, Literature" />
+                                    </div>
+                                    <span asp-validation-for="Specialization" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="YearsOfExperience" class="form-label fw-bold">
+                                        Years of Experience
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-clock"></i>
+                                        </span>
+                                        <input asp-for="YearsOfExperience" type="number" min="0" max="50" 
+                                               class="form-control" placeholder="0" />
+                                        <span class="input-group-text">years</span>
+                                    </div>
+                                    <span asp-validation-for="YearsOfExperience" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="HireDate" class="form-label fw-bold">
+                                        Hire Date <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </span>
+                                        <input asp-for="HireDate" type="date" class="form-control" 
+                                               max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                    </div>
+                                    <span asp-validation-for="HireDate" class="text-danger small"></span>
+                                    <div class="form-text">Date when the teacher was hired</div>
+                                </div>
+
+                                <!-- Employment Status Info -->
+                                <div class="mb-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body py-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted small">Employment Duration:</span>
+                                                <span class="fw-bold text-primary">
+                                                    @if (Model.HireDate != default(DateTime))
+                                                    {
+                                                        var years = (DateTime.Now - Model.HireDate).Days / 365.25;
+                                                        @($"{years:F1} years")
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Not calculated</span>
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <a asp-action="Index" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                                </a>
+                                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </a>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save me-2"></i>Update Teacher
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Course Assignment Information (if teacher has courses) -->
+            @if (Model.Courses != null && Model.Courses.Any())
+            {
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chalkboard-teacher me-2"></i>Current Course Assignments
+                            <span class="badge bg-light text-dark ms-2">@Model.Courses.Count()</span>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Notice:</strong> This teacher is currently assigned to @Model.Courses.Count() course(s). 
+                            Changes to teacher information may affect course schedules.
+                        </div>
+                        <div class="row">
+                            @foreach (var course in Model.Courses.Take(6))
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-primary">
+                                        <div class="card-body py-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <div class="fw-bold">@course.CourseCode</div>
+                                                    <small class="text-muted">@course.CourseName</small>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span class="badge bg-success">@course.Credits credits</span>
+                                                    <br>
+                                                    <small class="text-muted">@course.CourseEnrollments.Count() students</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @if (Model.Courses.Count() > 6)
+                        {
+                            <div class="text-center mt-2">
+                                <small class="text-muted">... and @(Model.Courses.Count() - 6) more courses</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-format phone number
+            const phoneInput = document.querySelector('input[name="PhoneNumber"]');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function() {
+                    let value = this.value.replace(/\D/g, '');
+                    if (value.length >= 6) {
+                        value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                    } else if (value.length >= 3) {
+                        value = value.replace(/(\d{3})(\d+)/, '($1) $2');
+                    }
+                    this.value = value;
+                });
+            }
+            
+            // Calculate employment duration on hire date change
+            const hireDateInput = document.querySelector('input[name="HireDate"]');
+            if (hireDateInput) {
+                hireDateInput.addEventListener('change', function() {
+                    if (this.value) {
+                        const hireDate = new Date(this.value);
+                        const now = new Date();
+                        const years = (now - hireDate) / (1000 * 60 * 60 * 24 * 365.25);
+                        
+                        // Find and update the employment duration display
+                        const durationElement = document.querySelector('.card.bg-light .fw-bold.text-primary');
+                        if (durationElement && years >= 0) {
+                            durationElement.textContent = years.toFixed(1) + ' years';
+                        }
+                    }
+                });
+            }
+            
+            // Form validation feedback
+            const form = document.querySelector('.needs-validation');
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                });
+            }
+        });
+    </script>
+}

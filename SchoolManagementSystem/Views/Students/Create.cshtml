@@ -1,0 +1,209 @@
+@model SchoolManagementSystem.Models.Student
+
+@{
+    ViewData["Title"] = "Add New Student";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="fas fa-user-plus text-success me-2"></i>
+                    Add New Student
+                </h2>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Students
+                </a>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-user-graduate me-2"></i>Student Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="Create" method="post" novalidate>
+                                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="FirstName" class="form-label">
+                                                <i class="fas fa-user me-1"></i>First Name
+                                            </label>
+                                            <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="LastName" class="form-label">
+                                                <i class="fas fa-user me-1"></i>Last Name
+                                            </label>
+                                            <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                                            <span asp-validation-for="LastName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="Email" class="form-label">
+                                                <i class="fas fa-envelope me-1"></i>Email Address
+                                            </label>
+                                            <input asp-for="Email" class="form-control" type="email" placeholder="student@example.com" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="PhoneNumber" class="form-label">
+                                                <i class="fas fa-phone me-1"></i>Phone Number
+                                            </label>
+                                            <input asp-for="PhoneNumber" class="form-control" placeholder="(555) 123-4567" />
+                                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="DateOfBirth" class="form-label">
+                                                <i class="fas fa-calendar me-1"></i>Date of Birth
+                                            </label>
+                                            <input asp-for="DateOfBirth" class="form-control" type="date" />
+                                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="EnrollmentDate" class="form-label">
+                                                <i class="fas fa-calendar-plus me-1"></i>Enrollment Date
+                                            </label>
+                                            <input asp-for="EnrollmentDate" class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                            <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Address" class="form-label">
+                                        <i class="fas fa-map-marker-alt me-1"></i>Address
+                                    </label>
+                                    <textarea asp-for="Address" class="form-control" rows="3" placeholder="Enter student's address"></textarea>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="StudentId" class="form-label">
+                                                <i class="fas fa-id-card me-1"></i>Student ID
+                                            </label>
+                                            <input asp-for="StudentId" class="form-control" placeholder="Enter unique student ID" />
+                                            <span asp-validation-for="StudentId" class="text-danger"></span>
+                                            <div class="form-text">This should be a unique identifier for the student</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-body bg-light">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-info-circle text-info me-2"></i>
+                                            Additional Information
+                                        </h6>
+                                        <ul class="mb-0 text-muted">
+                                            <li>Student ID must be unique across the system</li>
+                                            <li>Email address will be used for communications</li>
+                                            <li>All required fields must be completed</li>
+                                            <li>You can enroll the student in courses after creation</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end mt-4">
+                                    <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                                        <i class="fas fa-times me-1"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save me-1"></i>Create Student
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default enrollment date to today
+            const enrollmentDateInput = document.querySelector('input[name="EnrollmentDate"]');
+            if (enrollmentDateInput && !enrollmentDateInput.value) {
+                const today = new Date().toISOString().split('T')[0];
+                enrollmentDateInput.value = today;
+            }
+
+            // Generate student ID suggestion
+            const firstNameInput = document.querySelector('input[name="FirstName"]');
+            const lastNameInput = document.querySelector('input[name="LastName"]');
+            const studentIdInput = document.querySelector('input[name="StudentId"]');
+
+            function generateStudentId() {
+                const firstName = firstNameInput.value.trim();
+                const lastName = lastNameInput.value.trim();
+                
+                if (firstName && lastName && !studentIdInput.value.trim()) {
+                    const year = new Date().getFullYear();
+                    const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+                    const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                    studentIdInput.value = `${year}${initials}${randomNum}`;
+                }
+            }
+
+            if (firstNameInput && lastNameInput && studentIdInput) {
+                firstNameInput.addEventListener('blur', generateStudentId);
+                lastNameInput.addEventListener('blur', generateStudentId);
+            }
+
+            // Form validation enhancement
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = form.querySelectorAll('input[required], select[required]');
+                    let isValid = true;
+
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            field.classList.remove('is-invalid');
+                        }
+                    });
+
+                    if (!isValid) {
+                        e.preventDefault();
+                        const firstInvalidField = form.querySelector('.is-invalid');
+                        if (firstInvalidField) {
+                            firstInvalidField.focus();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,327 @@
+@model SchoolManagementSystem.Models.Teacher
+
+@{
+    ViewData["Title"] = "Teacher Details";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-user-tie text-primary me-2"></i>Teacher Profile</h2>
+                    <p class="text-muted mb-0">Detailed information for @Model.FirstName @Model.LastName</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                        <i class="fas fa-edit me-1"></i>Edit Teacher
+                    </a>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Personal Information -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Personal Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="teacher-info">
+                        <div class="info-item mb-3">
+                            <label class="form-label fw-bold text-muted small">Full Name</label>
+                            <div class="h6">@Model.FirstName @Model.LastName</div>
+                        </div>
+                        
+                        <div class="info-item mb-3">
+                            <label class="form-label fw-bold text-muted small">Employee ID</label>
+                            <div>
+                                <span class="badge bg-light text-dark fs-6">@Model.EmployeeId</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item mb-3">
+                            <label class="form-label fw-bold text-muted small">Email</label>
+                            <div>
+                                <a href="mailto:@Model.Email" class="text-decoration-none">
+                                    <i class="fas fa-envelope me-2"></i>@Model.Email
+                                </a>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                        {
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted small">Phone</label>
+                                <div>
+                                    <a href="tel:@Model.PhoneNumber" class="text-decoration-none">
+                                        <i class="fas fa-phone me-2"></i>@Model.PhoneNumber
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.Address))
+                        {
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted small">Address</label>
+                                <div class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-2"></i>@Model.Address
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Information -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-briefcase me-2"></i>Professional Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="teacher-info">
+                        @if (!string.IsNullOrEmpty(Model.Department))
+                        {
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted small">Department</label>
+                                <div>
+                                    <span class="badge bg-success-subtle text-success fs-6">
+                                        <i class="fas fa-building me-1"></i>@Model.Department
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(Model.Specialization))
+                        {
+                            <div class="info-item mb-3">
+                                <label class="form-label fw-bold text-muted small">Specialization</label>
+                                <div>
+                                    <span class="badge bg-info-subtle text-info fs-6">
+                                        <i class="fas fa-star me-1"></i>@Model.Specialization
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                        
+                        <div class="info-item mb-3">
+                            <label class="form-label fw-bold text-muted small">Hire Date</label>
+                            <div>
+                                <i class="fas fa-calendar me-2 text-muted"></i>
+                                @Model.HireDate.ToString("MMMM dd, yyyy")
+                                <small class="text-muted">(@Model.HireDate.ToString("MMM yyyy"))</small>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item mb-3">
+                            <label class="form-label fw-bold text-muted small">Years of Experience</label>
+                            <div>
+                                <span class="badge bg-warning-subtle text-warning fs-6">
+                                    <i class="fas fa-clock me-1"></i>@Model.YearsOfExperience years
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <label class="form-label fw-bold text-muted small">Employment Duration</label>
+                            <div class="text-muted">
+                                <i class="fas fa-hourglass-half me-2"></i>
+                                @{
+                                    var employmentYears = (DateTime.Now - Model.HireDate).Days / 365.25;
+                                }
+                                @employmentYears.ToString("F1") years at institution
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Assignments -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-book me-2"></i>Course Assignments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Courses?.Any() == true)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Total Courses:</span>
+                                <span class="badge bg-info">@Model.Courses.Count()</span>
+                            </div>
+                        </div>
+                        
+                        <div class="course-list">
+                            @foreach (var course in Model.Courses.OrderBy(c => c.CourseCode))
+                            {
+                                <div class="course-item mb-2 p-2 bg-light rounded">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold text-primary">@course.CourseCode</div>
+                                            <div class="small text-muted">@course.CourseName</div>
+                                            <div class="small">
+                                                <i class="fas fa-users me-1"></i>
+                                                @(course.CourseEnrollments?.Count() ?? 0) students
+                                                <span class="mx-2">•</span>
+                                                <i class="fas fa-trophy me-1"></i>
+                                                @course.Credits credits
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="mt-3 pt-3 border-top">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="text-success fw-bold">@Model.Courses.Where(c => c.EndDate == null || c.EndDate > DateTime.Now).Count()</div>
+                                    <small class="text-muted">Active</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-muted fw-bold">@Model.Courses.Where(c => c.EndDate != null && c.EndDate <= DateTime.Now).Count()</div>
+                                    <small class="text-muted">Completed</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-info fw-bold">@Model.Courses.SelectMany(c => c.CourseEnrollments ?? new List<SchoolManagementSystem.Models.CourseEnrollment>()).Count()</div>
+                                    <small class="text-muted">Students</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-book fa-2x text-muted mb-3"></i>
+                            <div class="text-muted">No courses assigned</div>
+                            <small class="text-muted">This teacher is not currently assigned to any courses.</small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Teacher Information
+                        </a>
+                        
+                        @if (Model.Courses?.Any() != true)
+                        {
+                            <a asp-controller="Courses" asp-action="Create" asp-route-teacherId="@Model.Id" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Assign Course
+                            </a>
+                        }
+                        
+                        <a asp-controller="Courses" asp-action="Index" asp-route-teacherId="@Model.Id" class="btn btn-info">
+                            <i class="fas fa-list me-2"></i>View All Courses
+                        </a>
+                        
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-2"></i>Delete Teacher
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.teacher-info .info-item {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.teacher-info .info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.course-item {
+    transition: background-color 0.2s ease;
+}
+
+.course-item:hover {
+    background-color: #e9ecef !important;
+}
+
+.badge {
+    font-size: 0.85em;
+}
+
+@@media (max-width: 768px) {
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .d-flex.gap-2 .btn {
+        width: 100%;
+    }
+    
+    .d-flex.flex-wrap.gap-3 {
+        flex-direction: column;
+    }
+    
+    .d-flex.flex-wrap.gap-3 .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            if (alert.querySelector('.btn-close')) {
+                alert.querySelector('.btn-close').click();
+            }
+        });
+    }, 5000);
+
+    // Add hover effects to course items
+    document.querySelectorAll('.course-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-1px)';
+            this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+});
+</script>

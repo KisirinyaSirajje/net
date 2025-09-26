@@ -1,0 +1,266 @@
+@{
+    ViewData["Title"] = "Enroll Student";
+    var student = ViewBag.Student as SchoolManagementSystem.Models.Student;
+    var availableCourses = ViewBag.AvailableCourses as List<SchoolManagementSystem.Models.Course>;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-user-plus text-primary me-2"></i>Course Enrollment</h2>
+                    <p class="text-muted mb-0">Enroll @student?.FirstName @student?.LastName in new courses</p>
+                </div>
+                <a asp-action="Details" asp-route-id="@student?.Id" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Student Details
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Student Information Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>Student Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="student-info">
+                        <div class="mb-3">
+                            <strong>Student ID:</strong>
+                            <span class="badge bg-light text-dark">@student?.StudentId</span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Full Name:</strong>
+                            <div>@student?.FirstName @student?.LastName</div>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Email:</strong>
+                            <div class="text-muted">@student?.Email</div>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Enrollment Date:</strong>
+                            <div class="text-muted">@student?.EnrollmentDate.ToString("MMM dd, yyyy")</div>
+                        </div>
+                        <div>
+                            <strong>Current Enrollments:</strong>
+                            <span class="badge bg-info">@student?.CourseEnrollments?.Count() courses</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Currently Enrolled Courses -->
+            @if (student?.CourseEnrollments?.Any() == true)
+            {
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="card-title mb-0">
+                            <i class="fas fa-book me-2"></i>Currently Enrolled
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            @foreach (var enrollment in student.CourseEnrollments)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>@enrollment.Course?.CourseCode</strong>
+                                            <div class="text-muted small">@enrollment.Course?.CourseName</div>
+                                        </div>
+                                        <span class="badge bg-success">Active</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Available Courses -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>Available Courses for Enrollment
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (availableCourses?.Any() == true)
+                    {
+                        <div class="row">
+                            @foreach (var course in availableCourses)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 course-card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="card-title text-primary">
+                                                    @course.CourseCode
+                                                </h6>
+                                                <span class="badge bg-light text-dark">@course.Credits credits</span>
+                                            </div>
+                                            
+                                            <h6 class="course-name mb-2">@course.CourseName</h6>
+                                            
+                                            @if (!string.IsNullOrEmpty(course.Description))
+                                            {
+                                                <p class="text-muted small mb-3">@course.Description</p>
+                                            }
+                                            
+                                            <div class="course-details mb-3">
+                                                @if (course.Teacher != null)
+                                                {
+                                                    <div class="mb-2">
+                                                        <i class="fas fa-chalkboard-teacher text-muted me-2"></i>
+                                                        <small>@course.Teacher.FirstName @course.Teacher.LastName</small>
+                                                    </div>
+                                                }
+                                                
+                                                <div class="mb-2">
+                                                    <i class="fas fa-calendar text-muted me-2"></i>
+                                                    <small>@course.StartDate.ToString("MMM dd, yyyy")</small>
+                                                    @if (course.EndDate.HasValue)
+                                                    {
+                                                        <span> - @course.EndDate.Value.ToString("MMM dd, yyyy")</span>
+                                                    }
+                                                </div>
+                                                
+                                                @if (!string.IsNullOrEmpty(course.Schedule))
+                                                {
+                                                    <div class="mb-2">
+                                                        <i class="fas fa-clock text-muted me-2"></i>
+                                                        <small>@course.Schedule</small>
+                                                    </div>
+                                                }
+                                            </div>
+                                            
+                                            <form asp-action="EnrollInCourse" method="post" class="enroll-form">
+                                                <input type="hidden" name="studentId" value="@student?.Id" />
+                                                <input type="hidden" name="courseId" value="@course.Id" />
+                                                <button type="submit" class="btn btn-success btn-sm w-100" 
+                                                        onclick="return confirm('Are you sure you want to enroll this student in @course.FullCourseName?')">
+                                                    <i class="fas fa-plus me-2"></i>Enroll in Course
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Available Courses</h5>
+                            <p class="text-muted">
+                                @if (student?.CourseEnrollments?.Any() == true)
+                                {
+                                    <text>This student is already enrolled in all available courses, or there are no active courses at the moment.</text>
+                                }
+                                else
+                                {
+                                    <text>There are no active courses available for enrollment at the moment.</text>
+                                }
+                            </p>
+                            <a asp-controller="Courses" asp-action="Index" class="btn btn-outline-primary">
+                                <i class="fas fa-plus me-2"></i>Manage Courses
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.course-card {
+    border: 1px solid #e3e6f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.course-name {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.student-info > div {
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.student-info > div:last-child {
+    border-bottom: none;
+}
+
+.enroll-form button {
+    transition: all 0.3s ease;
+}
+
+.enroll-form button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+@@media (max-width: 768px) {
+    .course-card {
+        margin-bottom: 1rem;
+    }
+    
+    .student-info {
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add loading state to enrollment buttons
+    document.querySelectorAll('.enroll-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Enrolling...';
+            button.disabled = true;
+        });
+    });
+
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            if (alert.querySelector('.btn-close')) {
+                alert.querySelector('.btn-close').click();
+            }
+        });
+    }, 5000);
+});
+</script>

@@ -1,0 +1,323 @@
+@model IEnumerable<SchoolManagementSystem.Models.Course>
+
+@{
+    ViewData["Title"] = "Courses Management";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-graduation-cap text-primary me-2"></i>Courses Management</h2>
+                    <p class="text-muted mb-0">Manage courses and academic offerings</p>
+                </div>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add New Course
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Search and Filter Section -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" 
+                               class="form-control border-start-0" 
+                               placeholder="Search by course code, name, or description...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select name="sortOrder" class="form-select">
+                        <option value="">Sort by Course Code (A-Z)</option>
+                        <option value="code_desc" selected="@(ViewData["CodeSortParm"]?.ToString() == "code_desc")">Sort by Course Code (Z-A)</option>
+                        <option value="Name" selected="@(ViewData["NameSortParm"]?.ToString() == "Name")">Sort by Name (A-Z)</option>
+                        <option value="name_desc" selected="@(ViewData["NameSortParm"]?.ToString() == "name_desc")">Sort by Name (Z-A)</option>
+                        <option value="Credits" selected="@(ViewData["CreditsSortParm"]?.ToString() == "Credits")">Sort by Credits (Low-High)</option>
+                        <option value="credits_desc" selected="@(ViewData["CreditsSortParm"]?.ToString() == "credits_desc")">Sort by Credits (High-Low)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-outline-primary flex-fill">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Courses Cards -->
+    <div class="row">
+        @if (Model?.Any() == true)
+        {
+            @foreach (var course in Model)
+            {
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="card h-100 course-card border-0 shadow-sm">
+                        <div class="card-header bg-gradient-success text-white border-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-book me-2"></i>@course.CourseCode
+                                    </h6>
+                                    <small class="opacity-75">@course.Credits Credits</small>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@course.Id">
+                                            <i class="fas fa-eye me-2"></i>View Details</a></li>
+                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@course.Id">
+                                            <i class="fas fa-edit me-2"></i>Edit</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@course.Id">
+                                            <i class="fas fa-trash me-2"></i>Delete</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <h6 class="course-name text-primary mb-2">@course.CourseName</h6>
+                            
+                            @if (!string.IsNullOrEmpty(course.Description))
+                            {
+                                <p class="text-muted small mb-3">
+                                    @(course.Description.Length > 100 ? course.Description.Substring(0, 100) + "..." : course.Description)
+                                </p>
+                            }
+                            
+                            <div class="course-details">
+                                @if (course.Teacher != null)
+                                {
+                                    <div class="d-flex align-items-center text-muted small mb-2">
+                                        <i class="fas fa-chalkboard-teacher me-2"></i>
+                                        <span>@course.Teacher.FullName</span>
+                                    </div>
+                                }
+                                
+                                <div class="d-flex align-items-center text-muted small mb-2">
+                                    <i class="fas fa-calendar me-2"></i>
+                                    <span>@course.StartDate.ToString("MMM dd, yyyy")</span>
+                                    @if (course.EndDate.HasValue)
+                                    {
+                                        <span> - @course.EndDate.Value.ToString("MMM dd, yyyy")</span>
+                                    }
+                                </div>
+                                
+                                @if (!string.IsNullOrEmpty(course.Schedule))
+                                {
+                                    <div class="d-flex align-items-center text-muted small mb-2">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <span>@course.Schedule</span>
+                                    </div>
+                                }
+                                
+                                @if (!string.IsNullOrEmpty(course.Room))
+                                {
+                                    <div class="d-flex align-items-center text-muted small mb-2">
+                                        <i class="fas fa-door-open me-2"></i>
+                                        <span>Room: @course.Room</span>
+                                    </div>
+                                }
+                                
+                                <div class="d-flex align-items-center text-muted small">
+                                    <i class="fas fa-users me-2"></i>
+                                    <span>@(course.CourseEnrollments?.Count() ?? 0)/@course.MaxEnrollment students</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-light border-0">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">Enrollment Status:</small>
+                                @{
+                                    var enrollmentCount = course.CourseEnrollments?.Count() ?? 0;
+                                    var maxEnrollment = course.MaxEnrollment;
+                                    var enrollmentPercentage = maxEnrollment > 0 ? (enrollmentCount * 100.0 / maxEnrollment) : 0;
+                                    var statusClass = enrollmentPercentage >= 100 ? "bg-danger" : 
+                                                     enrollmentPercentage >= 80 ? "bg-warning" : "bg-success";
+                                }
+                                <span class="badge @statusClass">
+                                    @enrollmentPercentage.ToString("F0")%
+                                </span>
+                            </div>
+                            
+                            <div class="progress mb-2" style="height: 5px;">
+                                <div class="progress-bar @statusClass" style="width: @enrollmentPercentage%"></div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-eye me-1"></i>Details
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-outline-secondary btn-sm flex-fill">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No Courses Found</h5>
+                    <p class="text-muted">
+                        @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()))
+                        {
+                            <text>No courses match your search criteria. Try adjusting your search terms.</text>
+                        }
+                        else
+                        {
+                            <text>Get started by adding your first course to the system.</text>
+                        }
+                    </p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add First Course
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Summary Stats -->
+    @if (Model?.Any() == true)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="d-flex flex-column">
+                                    <span class="h4 text-primary mb-0">@Model.Count()</span>
+                                    <small class="text-muted">Total Courses</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-column">
+                                    <span class="h4 text-success mb-0">@Model.Where(c => c.EndDate == null || c.EndDate > DateTime.Now).Count()</span>
+                                    <small class="text-muted">Active Courses</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-column">
+                                    <span class="h4 text-info mb-0">@Model.SelectMany(c => c.CourseEnrollments ?? new List<SchoolManagementSystem.Models.CourseEnrollment>()).Count()</span>
+                                    <small class="text-muted">Total Enrollments</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex flex-column">
+                                    <span class="h4 text-warning mb-0">@(Model.Where(c => c.Credits > 0).Any() ? Model.Where(c => c.Credits > 0).Average(c => c.Credits).ToString("F1") : "0")</span>
+                                    <small class="text-muted">Avg Credits</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+.course-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.course-name {
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.course-details .small {
+    font-size: 0.875rem;
+}
+
+.progress {
+    background-color: #e9ecef;
+}
+
+@@media (max-width: 768px) {
+    .course-card .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            if (alert.querySelector('.btn-close')) {
+                alert.querySelector('.btn-close').click();
+            }
+        });
+    }, 5000);
+
+    // Add loading state to filter button
+    const filterForm = document.querySelector('form[asp-action="Index"]');
+    if (filterForm) {
+        filterForm.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Filtering...';
+            submitBtn.disabled = true;
+        });
+    }
+
+    // Add tooltips for enrollment status
+    document.querySelectorAll('.progress-bar').forEach(bar => {
+        const percentage = bar.style.width;
+        bar.setAttribute('title', `Enrollment: ${percentage}`);
+    });
+});
+</script>
