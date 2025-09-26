@@ -81,9 +81,9 @@ namespace SchoolManagementSystem.Controllers
                 {
                     var student = await _context.Students.FindAsync(performance.StudentId);
                     var gradeScale = await _context.GradeScales
-                        .FirstOrDefaultAsync(g => 
+                        .FirstOrDefaultAsync(g =>
                             g.Level == student.CurrentLevel &&
-                            performance.Score >= g.MinMark && 
+                            performance.Score >= g.MinMark &&
                             performance.Score <= g.MaxMark);
 
                     if (gradeScale != null)
@@ -114,7 +114,7 @@ namespace SchoolManagementSystem.Controllers
             var currentTerm = term ?? Term.Term1;
 
             var student = await _context.Students
-                .Include(s => s.SubjectPerformances.Where(sp => 
+                .Include(s => s.SubjectPerformances.Where(sp =>
                     sp.AcademicYear == currentYear && sp.Term == currentTerm))
                 .ThenInclude(sp => sp.Subject)
                 .Include(s => s.SubjectPerformances)
@@ -152,7 +152,7 @@ namespace SchoolManagementSystem.Controllers
             var students = await _context.Students
                 .Where(s => s.IsActive && s.CurrentLevel == selectedLevel)
                 .Where(s => selectedStream == Models.Stream.NotApplicable || s.Stream == selectedStream)
-                .Include(s => s.SubjectPerformances.Where(sp => 
+                .Include(s => s.SubjectPerformances.Where(sp =>
                     sp.AcademicYear == currentYear && sp.Term == currentTerm))
                 .ThenInclude(sp => sp.Subject)
                 .Include(s => s.SubjectPerformances)
@@ -181,7 +181,7 @@ namespace SchoolManagementSystem.Controllers
             var currentTerm = term ?? Term.Term1;
 
             var subject = await _context.Subjects
-                .Include(s => s.StudentPerformances.Where(sp => 
+                .Include(s => s.StudentPerformances.Where(sp =>
                     sp.AcademicYear == currentYear && sp.Term == currentTerm))
                 .ThenInclude(sp => sp.Student)
                 .Include(s => s.StudentPerformances)
@@ -227,20 +227,21 @@ namespace SchoolManagementSystem.Controllers
                 return NotFound();
             }
 
-        var gradeScales = await _context.GradeScales
-            .Where(g => g.Level == performance.Student.CurrentLevel)
-            .OrderBy(g => g.DisplayOrder)
-            .ToListAsync();
+            var gradeScales = await _context.GradeScales
+                .Where(g => g.Level == performance.Student.CurrentLevel)
+                .OrderBy(g => g.DisplayOrder)
+                .ToListAsync();
 
-        ViewBag.GradeScales = gradeScales;
-        ViewBag.GradeScalesJson = gradeScales.Select(g => new { 
-            grade = g.Grade, 
-            minMark = g.MinMark, 
-            maxMark = g.MaxMark, 
-            description = g.Description, 
-            gradePoint = g.GradePoint, 
-            isPassingGrade = g.IsPassingGrade 
-        });            return View(performance);
+            ViewBag.GradeScales = gradeScales;
+            ViewBag.GradeScalesJson = gradeScales.Select(g => new
+            {
+                grade = g.Grade,
+                minMark = g.MinMark,
+                maxMark = g.MaxMark,
+                description = g.Description,
+                gradePoint = g.GradePoint,
+                isPassingGrade = g.IsPassingGrade
+            }); return View(performance);
         }
 
         // POST: Grading/EditGrade/5
@@ -264,9 +265,9 @@ namespace SchoolManagementSystem.Controllers
                     {
                         var student = await _context.Students.FindAsync(performance.StudentId);
                         var gradeScale = await _context.GradeScales
-                            .FirstOrDefaultAsync(g => 
+                            .FirstOrDefaultAsync(g =>
                                 g.Level == student.CurrentLevel &&
-                                performance.Score >= g.MinMark && 
+                                performance.Score >= g.MinMark &&
                                 performance.Score <= g.MaxMark);
 
                         if (gradeScale != null)
@@ -301,13 +302,14 @@ namespace SchoolManagementSystem.Controllers
                 .ToListAsync();
 
             ViewBag.GradeScales = gradeScalesForPost;
-            ViewBag.GradeScalesJson = gradeScalesForPost.Select(g => new { 
-                grade = g.Grade, 
-                minMark = g.MinMark, 
-                maxMark = g.MaxMark, 
-                description = g.Description, 
-                gradePoint = g.GradePoint, 
-                isPassingGrade = g.IsPassingGrade 
+            ViewBag.GradeScalesJson = gradeScalesForPost.Select(g => new
+            {
+                grade = g.Grade,
+                minMark = g.MinMark,
+                maxMark = g.MaxMark,
+                description = g.Description,
+                gradePoint = g.GradePoint,
+                isPassingGrade = g.IsPassingGrade
             });
 
             return View(performance);

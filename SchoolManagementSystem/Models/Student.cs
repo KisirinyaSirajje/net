@@ -87,7 +87,7 @@ namespace SchoolManagementSystem.Models
             {
                 var validGrades = Grades.Where(g => g.NumericGrade.HasValue).ToList();
                 if (!validGrades.Any()) return null;
-                
+
                 return Math.Round(validGrades.Average(g => g.NumericGrade!.Value), 2);
             }
         }

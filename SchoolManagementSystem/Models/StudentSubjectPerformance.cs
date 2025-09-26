@@ -92,19 +92,19 @@ namespace SchoolManagementSystem.Models
     {
         [Display(Name = "Term 1")]
         Term1,
-        
+
         [Display(Name = "Term 2")]
         Term2,
-        
+
         [Display(Name = "Term 3")]
         Term3,
-        
+
         [Display(Name = "Semester 1")]
         Semester1,
-        
+
         [Display(Name = "Semester 2")]
         Semester2,
-        
+
         [Display(Name = "Annual")]
         Annual
     }
@@ -113,28 +113,28 @@ namespace SchoolManagementSystem.Models
     {
         [Display(Name = "Continuous Assessment")]
         ContinuousAssessment,
-        
+
         [Display(Name = "Mid-Term Exam")]
         MidtermExam,
-        
+
         [Display(Name = "Final Exam")]
         FinalExam,
-        
+
         [Display(Name = "Mock Exam")]
         MockExam,
-        
+
         [Display(Name = "UCE (O-Level Final)")]
         UCEExam,
-        
+
         [Display(Name = "UACE (A-Level Final)")]
         UACEExam,
-        
+
         [Display(Name = "Project Work")]
         ProjectWork,
-        
+
         [Display(Name = "Practical Assessment")]
         PracticalAssessment,
-        
+
         [Display(Name = "Coursework")]
         Coursework
     }

@@ -55,7 +55,7 @@ namespace SchoolManagementSystem.Models
     {
         [Display(Name = "O-Level (S1-S4)")]
         OLevel,
-        
+
         [Display(Name = "A-Level (S5-S6)")]
         ALevel
     }
@@ -64,10 +64,10 @@ namespace SchoolManagementSystem.Models
     {
         [Display(Name = "Compulsory")]
         Compulsory,
-        
+
         [Display(Name = "Elective")]
         Elective,
-        
+
         [Display(Name = "Optional")]
         Optional
     }
@@ -76,16 +76,16 @@ namespace SchoolManagementSystem.Models
     {
         [Display(Name = "Not Applicable")]
         NotApplicable,
-        
+
         [Display(Name = "Science/STEM")]
         Science,
-        
+
         [Display(Name = "Arts/Humanities")]
         Arts,
-        
+
         [Display(Name = "Business/Commerce")]
         Business,
-        
+
         [Display(Name = "Technical")]
         Technical
     }

@@ -46,8 +46,8 @@ namespace SchoolManagementSystem.Models
         public virtual ICollection<StudentSubjectPerformance> StudentPerformances { get; set; } = new List<StudentSubjectPerformance>();
 
         // Computed properties
-        public string FullDescription => !string.IsNullOrEmpty(Description) 
-            ? $"{Grade} ({MinMark}-{MaxMark}%) - {Description}" 
+        public string FullDescription => !string.IsNullOrEmpty(Description)
+            ? $"{Grade} ({MinMark}-{MaxMark}%) - {Description}"
             : $"{Grade} ({MinMark}-{MaxMark}%)";
 
         public string LevelDisplay => Level == EducationLevel.OLevel ? "O-Level" : "A-Level";
@@ -58,38 +58,38 @@ namespace SchoolManagementSystem.Models
         // O-Level Grades (UCE - New CBC)
         [Display(Name = "A - Exceptional")]
         A_Exceptional,
-        
+
         [Display(Name = "B - Outstanding")]
         B_Outstanding,
-        
+
         [Display(Name = "C - Satisfactory")]
         C_Satisfactory,
-        
+
         [Display(Name = "D - Basic")]
         D_Basic,
-        
+
         [Display(Name = "E - Elementary")]
         E_Elementary,
 
         // A-Level Grades (UACE)
         [Display(Name = "A - Distinction")]
         A_Distinction,
-        
+
         [Display(Name = "B - Credit")]
         B_Credit,
-        
+
         [Display(Name = "C - Pass")]
         C_Pass,
-        
+
         [Display(Name = "D - Weak Pass")]
         D_WeakPass,
-        
+
         [Display(Name = "E - Fail")]
         E_Fail,
-        
+
         [Display(Name = "O - Subsidiary Pass")]
         O_SubsidiaryPass,
-        
+
         [Display(Name = "F - Fail")]
         F_Fail
     }
@@ -98,28 +98,28 @@ namespace SchoolManagementSystem.Models
     {
         [Display(Name = "Draft")]
         Draft,
-        
+
         [Display(Name = "Submitted")]
         Submitted,
-        
+
         [Display(Name = "Approved")]
         Approved,
-        
+
         [Display(Name = "Published")]
         Published,
-        
+
         [Display(Name = "Pending Assessment")]
         Pending,
-        
+
         [Display(Name = "Incomplete")]
         Incomplete,
-        
+
         [Display(Name = "Result 1 - Qualifies for Certificate")]
         Result1_Qualified,
-        
+
         [Display(Name = "Result 2 - Does Not Qualify (Missing Requirements)")]
         Result2_NotQualified,
-        
+
         [Display(Name = "Result 3 - Below Basic Competency")]
         Result3_BelowBasic
     }
