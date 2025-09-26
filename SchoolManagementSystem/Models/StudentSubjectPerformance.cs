@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SchoolManagementSystem.Models
 {
@@ -69,9 +70,11 @@ namespace SchoolManagementSystem.Models
 
         // Navigation properties
         [ForeignKey("StudentId")]
+        [JsonIgnore]
         public virtual Student? Student { get; set; }
 
         [ForeignKey("SubjectId")]
+        [JsonIgnore]
         public virtual Subject? Subject { get; set; }
 
         [ForeignKey("GradeScaleId")]
@@ -112,19 +115,19 @@ namespace SchoolManagementSystem.Models
         ContinuousAssessment,
         
         [Display(Name = "Mid-Term Exam")]
-        MidTermExam,
+        MidtermExam,
         
-        [Display(Name = "End of Term Exam")]
-        EndOfTermExam,
+        [Display(Name = "Final Exam")]
+        FinalExam,
         
         [Display(Name = "Mock Exam")]
         MockExam,
         
         [Display(Name = "UCE (O-Level Final)")]
-        UCE,
+        UCEExam,
         
         [Display(Name = "UACE (A-Level Final)")]
-        UACE,
+        UACEExam,
         
         [Display(Name = "Project Work")]
         ProjectWork,

@@ -42,6 +42,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Grading/ClassReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3JhZGluZ1xDbGFzc1JlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Grading/EditGrade.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3JhZGluZ1xFZGl0R3JhZGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Grading/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3JhZGluZ1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Grading/ReportCard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3JhZGluZ1xSZXBvcnRDYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Grading/Student.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR3JhZGluZ1xTdHVkZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -80,6 +100,30 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Students/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Subjects/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3ViamVjdHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Subjects/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3ViamVjdHNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Subjects/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3ViamVjdHNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Subjects/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3ViamVjdHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Subjects/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3ViamVjdHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Subjects/LevelView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3ViamVjdHNcTGV2ZWxWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/sirajje/Desktop/net/SchoolManagementSystem/Views/Teachers/Create.cshtml]

@@ -1,0 +1,166 @@
+@model IEnumerable<SchoolManagementSystem.Models.Student>
+
+@{
+    ViewData["Title"] = "Student Grading";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chart-line"></i> Student Grading Management
+                    </h4>
+                    <small>Academic Year: @ViewBag.CurrentYear</small>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <a class="btn btn-success" asp-action="ClassReport">
+                                <i class="fas fa-chart-bar"></i> View Class Reports
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="input-group" style="max-width: 300px; margin-left: auto;">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Search students...">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="studentsTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Index Number</th>
+                                        <th>Class</th>
+                                        <th>Level</th>
+                                        <th>Stream</th>
+                                        <th>Enrolled Courses</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle me-2">
+                                                        @student.FirstName.First()@student.LastName.First()
+                                                    </div>
+                                                    <strong>@student.FirstName @student.LastName</strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@(student.IndexNumber ?? "N/A")</span>
+                                            </td>
+                                            <td>@(student.CurrentClass ?? "N/A")</td>
+                                            <td>
+                                                <span class="badge @(student.CurrentLevel == SchoolManagementSystem.Models.EducationLevel.OLevel ? "bg-primary" : "bg-success")">
+                                                    @(student.CurrentLevel == SchoolManagementSystem.Models.EducationLevel.OLevel ? "O-Level" : "A-Level")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @switch(student.Stream)
+                                                {
+                                                    case SchoolManagementSystem.Models.Stream.Science:
+                                                        <span class="badge bg-info">Science</span>
+                                                        break;
+                                                    case SchoolManagementSystem.Models.Stream.Arts:
+                                                        <span class="badge bg-warning">Arts</span>
+                                                        break;
+                                                    case SchoolManagementSystem.Models.Stream.Business:
+                                                        <span class="badge bg-success">Business</span>
+                                                        break;
+                                                    case SchoolManagementSystem.Models.Stream.Technical:
+                                                        <span class="badge bg-dark">Technical</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-light text-dark">General</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary">@student.CourseEnrollments.Count() courses</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a class="btn btn-sm btn-primary" asp-action="Student" asp-route-id="@student.Id" title="Grade Student">
+                                                        <i class="fas fa-pencil-alt"></i> Grade
+                                                    </a>
+                                                    <a class="btn btn-sm btn-success" asp-action="ReportCard" asp-route-id="@student.Id" title="View Report Card">
+                                                        <i class="fas fa-file-alt"></i> Report
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Students Found</h5>
+                            <p class="text-muted">There are no active students in the system.</p>
+                            <a class="btn btn-primary" asp-controller="Students" asp-action="Create">
+                                <i class="fas fa-plus"></i> Add New Student
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar-circle {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchInput');
+            const table = document.getElementById('studentsTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            searchInput.addEventListener('keyup', function () {
+                const filter = this.value.toLowerCase();
+
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const name = row.cells[0].textContent.toLowerCase();
+                    const indexNumber = row.cells[1].textContent.toLowerCase();
+                    const className = row.cells[2].textContent.toLowerCase();
+
+                    if (name.includes(filter) || indexNumber.includes(filter) || className.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
+}

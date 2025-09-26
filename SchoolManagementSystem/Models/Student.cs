@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SchoolManagementSystem.Models
 {
@@ -67,9 +68,13 @@ namespace SchoolManagementSystem.Models
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
+        [JsonIgnore]
         public virtual ICollection<CourseEnrollment> CourseEnrollments { get; set; } = new List<CourseEnrollment>();
+        [JsonIgnore]
         public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
+        [JsonIgnore]
         public virtual ICollection<Grade> Grades { get; set; } = new List<Grade>();
+        [JsonIgnore]
         public virtual ICollection<StudentSubjectPerformance> SubjectPerformances { get; set; } = new List<StudentSubjectPerformance>();
 
         // Computed property

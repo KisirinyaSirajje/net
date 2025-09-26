@@ -55,12 +55,36 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="subjectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-book-open"></i> Subjects
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="subjectsDropdown">
+                                <li><a class="dropdown-item" asp-controller="Subjects" asp-action="Index"><i class="fas fa-list"></i> All Subjects</a></li>
+                                <li><a class="dropdown-item" asp-controller="Subjects" asp-action="OLevel"><i class="fas fa-graduation-cap"></i> O-Level Subjects</a></li>
+                                <li><a class="dropdown-item" asp-controller="Subjects" asp-action="ALevel"><i class="fas fa-university"></i> A-Level Subjects</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Subjects" asp-action="Create"><i class="fas fa-plus"></i> Add Subject</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="gradingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-chart-line"></i> Grading & Reports
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gradingDropdown">
+                                <li><a class="dropdown-item" asp-controller="Grading" asp-action="Index"><i class="fas fa-users"></i> Grade Students</a></li>
+                                <li><a class="dropdown-item" asp-controller="Grading" asp-action="ClassReport"><i class="fas fa-chart-bar"></i> Class Reports</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><h6 class="dropdown-header">Report Cards</h6></li>
+                                <li><span class="dropdown-item-text text-muted small">Select from Grade Students</span></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="academicDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-calendar-check"></i> Academic
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="academicDropdown">
                                 <li><a class="dropdown-item" asp-controller="Attendance" asp-action="Index"><i class="fas fa-user-check"></i> Attendance</a></li>
-                                <li><a class="dropdown-item" asp-controller="Grades" asp-action="Index"><i class="fas fa-medal"></i> Grades</a></li>
+                                <li><a class="dropdown-item" asp-controller="Grading" asp-action="Index"><i class="fas fa-medal"></i> Grades</a></li>
                             </ul>
                         </li>
                     </ul>

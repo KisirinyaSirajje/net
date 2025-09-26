@@ -1,0 +1,244 @@
+@model SchoolManagementSystem.Models.StudentSubjectPerformance
+
+@{
+    ViewData["Title"] = "Edit Grade";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Grading</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Student" asp-route-id="@Model.StudentId">@Model.StudentName</a></li>
+                    <li class="breadcrumb-item active">Edit Grade</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Grade
+                    </h4>
+                    <small>@Model.Subject?.Name (@Model.Subject?.Code)</small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditGrade" method="post">
+                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="StudentId" type="hidden" />
+                        <input asp-for="SubjectId" type="hidden" />
+                        <input asp-for="SubmittedDate" type="hidden" />
+
+                        <!-- Student and Subject Info -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Student Information</h6>
+                                        <p class="mb-1"><strong>Name:</strong> @Model.StudentName</p>
+                                        <p class="mb-0"><strong>Subject:</strong> @Model.Subject?.Name</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Current Grade</h6>
+                                        <p class="mb-1">
+                                            <strong>Score:</strong> 
+                                            @if (Model.Score.HasValue)
+                                            {
+                                                <span class="badge @(Model.Score >= 70 ? "bg-success" : Model.Score >= 60 ? "bg-warning" : "bg-danger")">
+                                                    @Model.Score.Value.ToString("F1")%
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not Set</span>
+                                            }
+                                        </p>
+                                        <p class="mb-0">
+                                            <strong>Letter Grade:</strong> 
+                                            @if (!string.IsNullOrEmpty(Model.LetterGrade))
+                                            {
+                                                <span class="badge bg-primary">@Model.LetterGrade</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Not Set</span>
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Form Fields -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="AcademicYear" class="form-label">Academic Year</label>
+                                    <input asp-for="AcademicYear" class="form-control" />
+                                    <span asp-validation-for="AcademicYear" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Term" class="form-label">Term</label>
+                                    <select asp-for="Term" class="form-select">
+                                        <option value="0">Term 1</option>
+                                        <option value="1">Term 2</option>
+                                        <option value="2">Term 3</option>
+                                    </select>
+                                    <span asp-validation-for="Term" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="AssessmentType" class="form-label">Assessment Type</label>
+                                    <select asp-for="AssessmentType" class="form-select">
+                                        <option value="0">Continuous Assessment</option>
+                                        <option value="1">Mid-term Exam</option>
+                                        <option value="2">Final Exam</option>
+                                        <option value="3">Mock Exam</option>
+                                        <option value="4">UCE Exam</option>
+                                        <option value="5">UACE Exam</option>
+                                        <option value="6">Project Work</option>
+                                        <option value="7">Practical Assessment</option>
+                                        <option value="8">Coursework</option>
+                                    </select>
+                                    <span asp-validation-for="AssessmentType" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Score" class="form-label">Score (%)</label>
+                                    <input asp-for="Score" type="number" class="form-control" min="0" max="100" step="0.1" />
+                                    <span asp-validation-for="Score" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="ResultStatus" class="form-label">Result Status</label>
+                                    <select asp-for="ResultStatus" class="form-select">
+                                        <option value="0">Draft</option>
+                                        <option value="1">Submitted</option>
+                                        <option value="2">Approved</option>
+                                        <option value="3">Published</option>
+                                        <option value="4">Pending</option>
+                                        <option value="5">Incomplete</option>
+                                    </select>
+                                    <span asp-validation-for="ResultStatus" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="WeightPercentage" class="form-label">Weight Percentage</label>
+                                    <input asp-for="WeightPercentage" type="number" class="form-control" min="0" max="100" />
+                                    <span asp-validation-for="WeightPercentage" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Comments" class="form-label">Comments</label>
+                                    <textarea asp-for="Comments" class="form-control" rows="3" placeholder="Enter any additional comments or remarks..."></textarea>
+                                    <span asp-validation-for="Comments" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Grading Scale Reference -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-info-circle"></i> Grading Scale Reference
+                                </h6>
+                                <div class="row">
+                                    @foreach (var gradeScale in ViewBag.GradeScales)
+                                    {
+                                        <div class="col-md-2 col-sm-4 mb-2">
+                                            <div class="text-center p-2 border rounded">
+                                                <span class="badge bg-primary mb-1">@gradeScale.Grade</span>
+                                                <div><small>@gradeScale.MinMark-@gradeScale.MaxMark%</small></div>
+                                                <div><small class="text-muted">@gradeScale.Description</small></div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Update Grade
+                                </button>
+                                <a class="btn btn-secondary" asp-action="Student" asp-route-id="@Model.StudentId">
+                                    <i class="fas fa-arrow-left"></i> Back to Student
+                                </a>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-info" onclick="calculateGrade()">
+                                    <i class="fas fa-calculator"></i> Preview Grade
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function calculateGrade() {
+            const score = parseFloat(document.querySelector('input[name="Score"]').value);
+            const gradeScales = @Html.Raw(Json.Serialize(ViewBag.GradeScalesJson));
+            
+            if (isNaN(score) || score < 0 || score > 100) {
+                alert('Please enter a valid score between 0 and 100');
+                return;
+            }
+            
+            let matchedGrade = null;
+            for (let grade of gradeScales) {
+                if (score >= grade.minMark && score <= grade.maxMark) {
+                    matchedGrade = grade;
+                    break;
+                }
+            }
+            
+            if (matchedGrade) {
+                const message = `Score: ${score}%\nGrade: ${matchedGrade.grade}\nDescription: ${matchedGrade.description}\nGrade Points: ${matchedGrade.gradePoint}\nPassing: ${matchedGrade.isPassingGrade ? 'Yes' : 'No'}`;
+                alert(message);
+            } else {
+                alert('No matching grade found for this score');
+            }
+        }
+        
+        // Auto-update preview when score changes
+        document.querySelector('input[name="Score"]').addEventListener('input', function() {
+            const score = parseFloat(this.value);
+            if (!isNaN(score) && score >= 0 && score <= 100) {
+                // You could add real-time grade preview here
+            }
+        });
+    </script>
+}

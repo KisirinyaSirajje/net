@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SchoolManagementSystem.Models
 {
@@ -41,6 +42,7 @@ namespace SchoolManagementSystem.Models
         public int DisplayOrder { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual ICollection<StudentSubjectPerformance> StudentPerformances { get; set; } = new List<StudentSubjectPerformance>();
 
         // Computed properties
@@ -94,6 +96,24 @@ namespace SchoolManagementSystem.Models
 
     public enum ResultStatus
     {
+        [Display(Name = "Draft")]
+        Draft,
+        
+        [Display(Name = "Submitted")]
+        Submitted,
+        
+        [Display(Name = "Approved")]
+        Approved,
+        
+        [Display(Name = "Published")]
+        Published,
+        
+        [Display(Name = "Pending Assessment")]
+        Pending,
+        
+        [Display(Name = "Incomplete")]
+        Incomplete,
+        
         [Display(Name = "Result 1 - Qualifies for Certificate")]
         Result1_Qualified,
         
@@ -101,12 +121,6 @@ namespace SchoolManagementSystem.Models
         Result2_NotQualified,
         
         [Display(Name = "Result 3 - Below Basic Competency")]
-        Result3_BelowBasic,
-        
-        [Display(Name = "Pending Assessment")]
-        Pending,
-        
-        [Display(Name = "Incomplete")]
-        Incomplete
+        Result3_BelowBasic
     }
 }

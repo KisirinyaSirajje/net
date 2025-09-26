@@ -1,3 +1,12 @@
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.csproj.AssemblyReference.cache
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.AssemblyInfoInputs.cache
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.AssemblyInfo.cs
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.csproj.CoreCompileInputs.cache
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.RazorAssemblyInfo.cache
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.RazorAssemblyInfo.cs
+C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.sourcelink.json
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\bin\Debug\net8.0\appsettings.json
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\bin\Debug\net8.0\SchoolManagementSystem.staticwebassets.runtime.json
@@ -132,14 +141,6 @@ C:\Users\sirajje\Desktop\net\SchoolManagementSystem\bin\Debug\net8.0\runtimes\wi
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\bin\Debug\net8.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\bin\Debug\net8.0\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.csproj.AssemblyReference.cache
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.AssemblyInfoInputs.cache
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.AssemblyInfo.cs
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.csproj.CoreCompileInputs.cache
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.RazorAssemblyInfo.cache
-C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\SchoolManagementSystem.RazorAssemblyInfo.cs
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\sirajje\Desktop\net\SchoolManagementSystem\obj\Debug\net8.0\staticwebassets\msbuild.SchoolManagementSystem.Microsoft.AspNetCore.StaticWebAssets.props

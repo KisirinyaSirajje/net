@@ -1,0 +1,280 @@
+@model SchoolManagementSystem.Models.Subject
+
+@{
+    ViewData["Title"] = "Subject Details";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Subjects</a></li>
+                    <li class="breadcrumb-item active">@Model.Name</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Subject Information -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-book"></i> @Model.Name
+                        @if (!string.IsNullOrEmpty(Model.Code))
+                        {
+                            <span class="badge bg-light text-dark ms-2">@Model.Code</span>
+                        }
+                    </h4>
+                    <small>@Model.LevelAndStream</small>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Subject Information</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Education Level:</strong></td>
+                                    <td>
+                                        <span class="badge @(Model.Level == EducationLevel.OLevel ? "bg-primary" : "bg-success")">
+                                            @(Model.Level == EducationLevel.OLevel ? "O-Level (S1-S4)" : "A-Level (S5-S6)")
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Subject Type:</strong></td>
+                                    <td>
+                                        <span class="badge @(Model.Type == SubjectType.Compulsory ? "bg-danger" : Model.Type == SubjectType.Elective ? "bg-warning" : "bg-info")">
+                                            @Model.Type
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stream/Track:</strong></td>
+                                    <td>
+                                        @if (Model.Stream != SchoolManagementSystem.Models.Stream.NotApplicable)
+                                        {
+                                            <span class="badge bg-secondary">@Model.Stream</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not Applicable</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Credit Hours:</strong></td>
+                                    <td>@Model.Credits hours per week</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status:</strong></td>
+                                    <td>
+                                        <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                                            @(Model.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Description</h6>
+                            <p>@(Model.Description ?? "No description available.")</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">
+                            <i class="fas fa-edit"></i> Edit Subject
+                        </a>
+                        <a class="btn btn-primary" asp-action="AssignTeacher" asp-route-id="@Model.Id">
+                            <i class="fas fa-user-plus"></i> Assign Teachers
+                        </a>
+                        <a class="btn btn-info" asp-controller="Grading" asp-action="SubjectReport" asp-route-id="@Model.Id">
+                            <i class="fas fa-chart-bar"></i> View Performance
+                        </a>
+                        @if (Model.IsActive)
+                        {
+                            <a class="btn btn-outline-danger" asp-action="Delete" asp-route-id="@Model.Id">
+                                <i class="fas fa-trash"></i> Deactivate
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Statistics</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h5 class="text-primary">@Model.StudentPerformances.Count</h5>
+                            <small class="text-muted">Students Enrolled</small>
+                        </div>
+                        <div class="col-6">
+                            <h5 class="text-success">@Model.TeacherSubjects.Count(ts => ts.IsActive)</h5>
+                            <small class="text-muted">Teachers Assigned</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col-12">
+                            <h6 class="text-info">@Model.Courses.Count</h6>
+                            <small class="text-muted">Associated Courses</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assigned Teachers -->
+    @if (Model.TeacherSubjects.Any(ts => ts.IsActive))
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-chalkboard-teacher"></i> Assigned Teachers
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Teacher Name</th>
+                                        <th>Qualification Level</th>
+                                        <th>Primary Subject</th>
+                                        <th>Experience</th>
+                                        <th>Assigned Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var teacherSubject in Model.TeacherSubjects.Where(ts => ts.IsActive))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Teachers" asp-action="Details" asp-route-id="@teacherSubject.TeacherId">
+                                                    @teacherSubject.Teacher?.FullName
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">@teacherSubject.QualificationLevel</span>
+                                            </td>
+                                            <td>
+                                                @if (teacherSubject.IsPrimarySubject)
+                                                {
+                                                    <span class="badge bg-success">Primary</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Secondary</span>
+                                                }
+                                            </td>
+                                            <td>@teacherSubject.YearsOfExperience years</td>
+                                            <td>@teacherSubject.AssignedDate.ToShortDateString()</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="removeTeacher(@teacherSubject.Id)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Student Performance Summary -->
+    @if (Model.StudentPerformances.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-chart-line"></i> Recent Performance Summary
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @{
+                                var recentPerformances = Model.StudentPerformances
+                                    .Where(sp => sp.Score.HasValue)
+                                    .OrderByDescending(sp => sp.SubmittedDate)
+                                    .Take(5)
+                                    .ToList();
+                            }
+                            @if (recentPerformances.Any())
+                            {
+                                <div class="col-md-6">
+                                    <h6>Recent Grades</h6>
+                                    @foreach (var performance in recentPerformances)
+                                    {
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small>@performance.StudentName</small>
+                                            <span class="badge @(performance.Score >= 70 ? "bg-success" : performance.Score >= 60 ? "bg-warning" : "bg-danger")">
+                                                @performance.LetterGrade (@performance.Score.Value.ToString("F1")%)
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Performance Statistics</h6>
+                                    @{
+                                        var allScores = Model.StudentPerformances.Where(sp => sp.Score.HasValue).Select(sp => sp.Score.Value).ToList();
+                                        var averageScore = allScores.Any() ? allScores.Average() : 0;
+                                        var passingGrades = Model.StudentPerformances.Count(sp => sp.IsPassing);
+                                        var totalGrades = Model.StudentPerformances.Count();
+                                    }
+                                    <p class="mb-1"><strong>Average Score:</strong> @averageScore.ToString("F1")%</p>
+                                    <p class="mb-1"><strong>Pass Rate:</strong> @(totalGrades > 0 ? (passingGrades * 100 / totalGrades).ToString("F1") : "0")%</p>
+                                    <p class="mb-0"><strong>Total Assessments:</strong> @totalGrades</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-12 text-center text-muted">
+                                    <p>No performance data available yet.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function removeTeacher(teacherSubjectId) {
+            if (confirm('Are you sure you want to remove this teacher assignment?')) {
+                // Implementation for removing teacher assignment
+                // This would typically involve an AJAX call to a RemoveTeacher action
+                console.log('Remove teacher assignment:', teacherSubjectId);
+            }
+        }
+    </script>
+}

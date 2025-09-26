@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SchoolManagementSystem.Models
 {
@@ -38,8 +39,11 @@ namespace SchoolManagementSystem.Models
         public int Credits { get; set; } = 1;
 
         // Navigation properties
+        [JsonIgnore]
         public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+        [JsonIgnore]
         public virtual ICollection<StudentSubjectPerformance> StudentPerformances { get; set; } = new List<StudentSubjectPerformance>();
+        [JsonIgnore]
         public virtual ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
 
         // Computed properties

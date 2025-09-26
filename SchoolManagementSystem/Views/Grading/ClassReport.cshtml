@@ -1,0 +1,277 @@
+@model IEnumerable<SchoolManagementSystem.Models.Student>
+
+@{
+    ViewData["Title"] = "Class Performance Report";
+    var selectedLevel = ViewBag.SelectedLevel as EducationLevel? ?? EducationLevel.OLevel;
+    var selectedStream = ViewBag.SelectedStream as SchoolManagementSystem.Models.Stream? ?? SchoolManagementSystem.Models.Stream.NotApplicable;
+    var currentYear = ViewBag.CurrentYear as string ?? DateTime.Now.Year.ToString();
+    var currentTerm = ViewBag.CurrentTerm as Term? ?? Term.Term1;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Grading</a></li>
+                    <li class="breadcrumb-item active">Class Report</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chart-line"></i> Class Performance Report
+                    </h4>
+                    <small>@selectedLevel @(selectedStream != SchoolManagementSystem.Models.Stream.NotApplicable ? $"- {selectedStream}" : "") | @currentYear - @currentTerm</small>
+                </div>
+
+                <div class="card-body">
+                    <!-- Filter Form -->
+                    <form method="get" class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-2">
+                                <label for="level" class="form-label">Education Level</label>
+                                <select name="level" id="level" class="form-select">
+                                    <option value="0" selected="@(selectedLevel == EducationLevel.OLevel)">O-Level</option>
+                                    <option value="1" selected="@(selectedLevel == EducationLevel.ALevel)">A-Level</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="stream" class="form-label">Stream</label>
+                                <select name="stream" id="stream" class="form-select">
+                                    <option value="0" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.NotApplicable)">All Streams</option>
+                                    <option value="1" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Science)">Science</option>
+                                    <option value="2" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Arts)">Arts</option>
+                                    <option value="3" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Business)">Business</option>
+                                    <option value="4" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Technical)">Technical</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="academicYear" class="form-label">Academic Year</label>
+                                <select name="academicYear" id="academicYear" class="form-select">
+                                    <option value="@DateTime.Now.Year" selected="@(currentYear == DateTime.Now.Year.ToString())">@DateTime.Now.Year</option>
+                                    <option value="@(DateTime.Now.Year - 1)" selected="@(currentYear == (DateTime.Now.Year - 1).ToString())">@(DateTime.Now.Year - 1)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="term" class="form-label">Term</label>
+                                <select name="term" id="term" class="form-select">
+                                    <option value="0" selected="@(currentTerm == Term.Term1)">Term 1</option>
+                                    <option value="1" selected="@(currentTerm == Term.Term2)">Term 2</option>
+                                    <option value="2" selected="@(currentTerm == Term.Term3)">Term 3</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary d-block">
+                                    <i class="fas fa-filter"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    @if (Model.Any())
+                    {
+                        <!-- Summary Statistics -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <h3>@Model.Count()</h3>
+                                        <small>Total Students</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h3>@Model.Count(s => s.SubjectPerformances.Any(sp => sp.GradeScale?.IsPassingGrade == true))</h3>
+                                        <small>Passing Students</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        @{
+                                            var allScores = Model.SelectMany(s => s.SubjectPerformances)
+                                                                 .Where(sp => sp.Score.HasValue)
+                                                                 .Select(sp => sp.Score.Value);
+                                        }
+                                        <h3>@(allScores.Any() ? allScores.Average().ToString("F1") : "N/A")%</h3>
+                                        <small>Class Average</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        @{
+                                            var passRate = Model.Any() ? 
+                                                (Model.Count(s => s.SubjectPerformances.Any(sp => sp.GradeScale?.IsPassingGrade == true)) * 100.0 / Model.Count()) : 0;
+                                        }
+                                        <h3>@passRate.ToString("F1")%</h3>
+                                        <small>Pass Rate</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Student Performance Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Student ID</th>
+                                        <th>Class</th>
+                                        <th>Subjects Taken</th>
+                                        <th>Subjects Passed</th>
+                                        <th>Average Score</th>
+                                        <th>Average Grade</th>
+                                        <th>Overall Performance</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in Model.OrderBy(s => s.FirstName).ThenBy(s => s.LastName))
+                                    {
+                                        var performances = student.SubjectPerformances.ToList();
+                                        var subjectCount = performances.Count;
+                                        var passedCount = performances.Count(p => p.GradeScale?.IsPassingGrade == true);
+                                        var avgScore = performances.Where(p => p.Score.HasValue).Any() ? 
+                                                      performances.Where(p => p.Score.HasValue).Average(p => p.Score.Value) : (decimal?)null;
+                                        var avgGradePoint = performances.Where(p => p.GradePoint.HasValue).Any() ? 
+                                                           performances.Where(p => p.GradePoint.HasValue).Average(p => p.GradePoint.Value) : (decimal?)null;
+                                        
+                                        <tr>
+                                            <td>
+                                                <strong>@student.FullName</strong>
+                                            </td>
+                                            <td>@student.StudentId</td>
+                                            <td>@student.CurrentClass</td>
+                                            <td>
+                                                <span class="badge bg-primary">@subjectCount</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(passedCount > subjectCount / 2 ? "bg-success" : "bg-danger")">
+                                                    @passedCount
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (avgScore.HasValue)
+                                                {
+                                                    <span class="badge @(avgScore >= 70 ? "bg-success" : avgScore >= 60 ? "bg-warning" : "bg-danger")">
+                                                        @avgScore.Value.ToString("F1")%
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">N/A</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (avgGradePoint.HasValue)
+                                                {
+                                                    <span class="badge bg-info">@avgGradePoint.Value.ToString("F2")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">N/A</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var performanceLevel = avgScore.HasValue ? 
+                                                        (avgScore >= 80 ? "Excellent" : 
+                                                         avgScore >= 70 ? "Very Good" : 
+                                                         avgScore >= 60 ? "Good" : 
+                                                         avgScore >= 50 ? "Satisfactory" : "Needs Improvement") : "Not Assessed";
+                                                    var badgeClass = avgScore.HasValue ? 
+                                                        (avgScore >= 80 ? "bg-success" : 
+                                                         avgScore >= 70 ? "bg-primary" : 
+                                                         avgScore >= 60 ? "bg-info" : 
+                                                         avgScore >= 50 ? "bg-warning" : "bg-danger") : "bg-secondary";
+                                                }
+                                                <span class="badge @badgeClass">@performanceLevel</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Student" asp-route-id="@student.Id" 
+                                                       class="btn btn-sm btn-outline-primary" title="View Grades">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="ReportCard" asp-route-id="@student.Id" 
+                                                       asp-route-academicYear="@currentYear" asp-route-term="@currentTerm"
+                                                       class="btn btn-sm btn-outline-success" title="Report Card">
+                                                        <i class="fas fa-file-alt"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Export Options -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-outline-success" onclick="exportToExcel()">
+                                        <i class="fas fa-file-excel"></i> Export to Excel
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="exportToPDF()">
+                                        <i class="fas fa-file-pdf"></i> Export to PDF
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+                                        <i class="fas fa-print"></i> Print Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle"></i>
+                            <h5>No Student Data Available</h5>
+                            <p>No students found for the selected criteria. Please adjust your filters or check if students have been enrolled for this level and term.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function exportToExcel() {
+            alert('Excel export functionality would be implemented here.');
+            // Implementation would require a server-side export library or client-side library like SheetJS
+        }
+
+        function exportToPDF() {
+            alert('PDF export functionality would be implemented here.');
+            // Implementation would require a server-side PDF library like iTextSharp or client-side library
+        }
+
+        // Print styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @@media print {
+                .btn, .card-header, nav { display: none !important; }
+                .card { border: none !important; box-shadow: none !important; }
+                .table { font-size: 12px; }
+                .badge { color: #000 !important; background: transparent !important; border: 1px solid #000; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+}

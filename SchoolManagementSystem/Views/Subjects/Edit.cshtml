@@ -1,0 +1,143 @@
+@model SchoolManagementSystem.Models.Subject
+
+@{
+    ViewData["Title"] = "Edit Subject";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Subjects</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Subject
+                    </h4>
+                    <small>@Model.Name (@Model.Code)</small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Name" class="form-label">Subject Name <span class="text-danger">*</span></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Code" class="form-label">Subject Code</label>
+                                    <input asp-for="Code" class="form-control" />
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Level" class="form-label">Education Level <span class="text-danger">*</span></label>
+                                    <select asp-for="Level" class="form-select">
+                                        <option value="0">O-Level (S1-S4)</option>
+                                        <option value="1">A-Level (S5-S6)</option>
+                                    </select>
+                                    <span asp-validation-for="Level" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Type" class="form-label">Subject Type <span class="text-danger">*</span></label>
+                                    <select asp-for="Type" class="form-select">
+                                        <option value="0">Compulsory</option>
+                                        <option value="1">Elective</option>
+                                        <option value="2">Optional</option>
+                                    </select>
+                                    <span asp-validation-for="Type" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Stream" class="form-label">Stream/Track</label>
+                                    <select asp-for="Stream" class="form-select">
+                                        <option value="0">Not Applicable</option>
+                                        <option value="1">Science/STEM</option>
+                                        <option value="2">Arts/Humanities</option>
+                                        <option value="3">Business/Commerce</option>
+                                        <option value="4">Technical</option>
+                                    </select>
+                                    <span asp-validation-for="Stream" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Credits" class="form-label">Credits/Hours</label>
+                                    <input asp-for="Credits" type="number" class="form-control" min="1" max="10" />
+                                    <span asp-validation-for="Credits" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Description" class="form-label">Description</label>
+                                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Status</label>
+                                    <div class="form-check">
+                                        <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                        <label asp-for="IsActive" class="form-check-label">
+                                            Active Subject
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-save"></i> Update Subject
+                                </button>
+                                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@Model.Id">
+                                    <i class="fas fa-arrow-left"></i> Back to Details
+                                </a>
+                            </div>
+                            <div>
+                                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

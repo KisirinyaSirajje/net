@@ -1,0 +1,209 @@
+@model SchoolManagementSystem.Models.Subject
+
+@{
+    ViewData["Title"] = "Delete Subject";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Subjects</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a></li>
+                    <li class="breadcrumb-item active">Delete</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Confirm Subject Deactivation
+                    </h4>
+                    <small>This action will deactivate the subject but preserve all associated data</small>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle"></i> Important Notice
+                        </h6>
+                        <p class="mb-0">
+                            This action will <strong>deactivate</strong> the subject rather than permanently delete it. 
+                            This preserves all student grades, teacher assignments, and historical data while making 
+                            the subject unavailable for new enrollments.
+                        </p>
+                    </div>
+
+                    <!-- Subject Details -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @Model.Name
+                                @if (!string.IsNullOrEmpty(Model.Code))
+                                {
+                                    <span class="badge bg-secondary ms-2">@Model.Code</span>
+                                }
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Level:</strong> 
+                                        <span class="badge @(Model.Level == EducationLevel.OLevel ? "bg-primary" : "bg-success")">
+                                            @(Model.Level == EducationLevel.OLevel ? "O-Level (S1-S4)" : "A-Level (S5-S6)")
+                                        </span>
+                                    </p>
+                                    <p class="mb-1"><strong>Type:</strong> 
+                                        <span class="badge @(Model.Type == SubjectType.Compulsory ? "bg-danger" : Model.Type == SubjectType.Elective ? "bg-warning" : "bg-info")">
+                                            @Model.Type
+                                        </span>
+                                    </p>
+                                    @if (Model.Stream != SchoolManagementSystem.Models.Stream.NotApplicable)
+                                    {
+                                        <p class="mb-1"><strong>Stream:</strong> 
+                                            <span class="badge bg-secondary">@Model.Stream</span>
+                                        </p>
+                                    }
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Credit Hours:</strong> @Model.Credits</p>
+                                    <p class="mb-1"><strong>Current Status:</strong> 
+                                        <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                                            @(Model.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Description))
+                            {
+                                <p class="mb-0"><strong>Description:</strong> @Model.Description</p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Impact Assessment -->
+                    <div class="card border-warning mb-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0">
+                                <i class="fas fa-chart-bar"></i> Impact Assessment
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <h4 class="text-primary">@Model.StudentPerformances.Count</h4>
+                                    <small class="text-muted">Student Records</small>
+                                    <p class="small mb-0">Will be preserved</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4 class="text-success">@Model.TeacherSubjects.Count(ts => ts.IsActive)</h4>
+                                    <small class="text-muted">Teacher Assignments</small>
+                                    <p class="small mb-0">Will be deactivated</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4 class="text-info">@Model.Courses.Count</h4>
+                                    <small class="text-muted">Associated Courses</small>
+                                    <p class="small mb-0">Will remain linked</p>
+                                </div>
+                                <div class="col-md-3">
+                                    @{
+                                        var activeStudents = Model.StudentPerformances
+                                            .Select(sp => sp.Student)
+                                            .Where(s => s != null && s.IsActive)
+                                            .Distinct()
+                                            .Count();
+                                    }
+                                    <h4 class="text-warning">@activeStudents</h4>
+                                    <small class="text-muted">Active Students</small>
+                                    <p class="small mb-0">May be affected</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consequences List -->
+                    <div class="card border-info mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-list"></i> What will happen:
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Subject will be marked as inactive
+                                    <span class="badge bg-warning rounded-pill">Status Change</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    No new student enrollments allowed
+                                    <span class="badge bg-danger rounded-pill">Enrollment Blocked</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Existing teacher assignments will be deactivated
+                                    <span class="badge bg-warning rounded-pill">Teachers Unassigned</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    All student grades and performance data preserved
+                                    <span class="badge bg-success rounded-pill">Data Preserved</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Subject can be reactivated later if needed
+                                    <span class="badge bg-info rounded-pill">Reversible</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Form -->
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@Model.Id">
+                                    <i class="fas fa-arrow-left"></i> Cancel
+                                </a>
+                                <a class="btn btn-outline-primary" asp-action="Index">
+                                    <i class="fas fa-list"></i> Back to List
+                                </a>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-danger" onclick="return confirmDeactivation()">
+                                    <i class="fas fa-ban"></i> Deactivate Subject
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDeactivation() {
+            const subjectName = '@Model.Name';
+            const studentCount = @Model.StudentPerformances.Count;
+            const teacherCount = @Model.TeacherSubjects.Count(ts => ts.IsActive);
+            
+            let message = `Are you sure you want to deactivate "${subjectName}"?\n\n`;
+            message += `This will affect:\n`;
+            message += `• ${studentCount} student record(s)\n`;
+            message += `• ${teacherCount} teacher assignment(s)\n\n`;
+            message += `The subject can be reactivated later if needed.`;
+            
+            return confirm(message);
+        }
+
+        // Add warning styling when hovering over the delete button
+        document.querySelector('button[type="submit"]').addEventListener('mouseenter', function() {
+            this.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Confirm Deactivation';
+        });
+        
+        document.querySelector('button[type="submit"]').addEventListener('mouseleave', function() {
+            this.innerHTML = '<i class="fas fa-ban"></i> Deactivate Subject';
+        });
+    </script>
+}

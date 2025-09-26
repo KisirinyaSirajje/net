@@ -1,0 +1,199 @@
+@model IEnumerable<SchoolManagementSystem.Models.Subject>
+
+@{
+    ViewData["Title"] = "Uganda Curriculum Subjects";
+    var selectedLevel = ViewBag.SelectedLevel as SchoolManagementSystem.Models.EducationLevel?;
+    var selectedStream = ViewBag.SelectedStream as SchoolManagementSystem.Models.Stream?;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-book-open"></i> Uganda Curriculum Subjects
+                        </h4>
+                        <a class="btn btn-light btn-sm" asp-action="Create">
+                            <i class="fas fa-plus"></i> Add New Subject
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Filters -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <form asp-action="Index" method="get" class="d-flex gap-3">
+                                <div class="form-group">
+                                    <label class="form-label">Education Level</label>
+                                    <select name="level" class="form-select" onchange="this.form.submit()">
+                                        <option value="">All Levels</option>
+                                        <option value="0" selected="@(selectedLevel == SchoolManagementSystem.Models.EducationLevel.OLevel)">O-Level (S1-S4)</option>
+                                        <option value="1" selected="@(selectedLevel == SchoolManagementSystem.Models.EducationLevel.ALevel)">A-Level (S5-S6)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Stream</label>
+                                    <select name="stream" class="form-select" onchange="this.form.submit()">
+                                        <option value="">All Streams</option>
+                                        <option value="0" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.NotApplicable)">General</option>
+                                        <option value="1" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Science)">Science</option>
+                                        <option value="2" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Arts)">Arts</option>
+                                        <option value="3" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Business)">Business</option>
+                                        <option value="4" selected="@(selectedStream == SchoolManagementSystem.Models.Stream.Technical)">Technical</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a class="btn btn-outline-primary" asp-action="OLevel">
+                                    <i class="fas fa-graduation-cap"></i> O-Level Subjects
+                                </a>
+                                <a class="btn btn-outline-success" asp-action="ALevel">
+                                    <i class="fas fa-university"></i> A-Level Subjects
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Any())
+                    {
+                        <div class="row">
+                            @foreach (var levelGroup in Model.GroupBy(s => s.Level))
+                            {
+                                <div class="col-12 mb-4">
+                                    <h5 class="text-primary mb-3">
+                                        <i class="fas @(levelGroup.Key == SchoolManagementSystem.Models.EducationLevel.OLevel ? "fa-graduation-cap" : "fa-university")"></i>
+                                        @(levelGroup.Key == SchoolManagementSystem.Models.EducationLevel.OLevel ? "Ordinary Level (O-Level)" : "Advanced Level (A-Level)")
+                                    </h5>
+                                    
+                                    @foreach (var streamGroup in levelGroup.GroupBy(s => s.Stream))
+                                    {
+                                        @if (streamGroup.Key != SchoolManagementSystem.Models.Stream.NotApplicable || levelGroup.Any(s => s.Stream == SchoolManagementSystem.Models.Stream.NotApplicable))
+                                        {
+                                            <h6 class="text-secondary mb-2">
+                                                @switch(streamGroup.Key)
+                                                {
+                                                    case SchoolManagementSystem.Models.Stream.Science:
+                                                        <span class="badge bg-info me-2">Science Stream</span>
+                                                        break;
+                                                    case SchoolManagementSystem.Models.Stream.Arts:
+                                                        <span class="badge bg-warning me-2">Arts Stream</span>
+                                                        break;
+                                                    case SchoolManagementSystem.Models.Stream.Business:
+                                                        <span class="badge bg-success me-2">Business Stream</span>
+                                                        break;
+                                                    case SchoolManagementSystem.Models.Stream.Technical:
+                                                        <span class="badge bg-dark me-2">Technical Stream</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-light text-dark me-2">Core/General Subjects</span>
+                                                        break;
+                                                }
+                                            </h6>
+                                        }
+                                        
+                                        <div class="row mb-3">
+                                            @foreach (var subject in streamGroup.OrderBy(s => s.Type).ThenBy(s => s.Name))
+                                            {
+                                                <div class="col-lg-4 col-md-6 mb-3">
+                                                    <div class="card h-100 border-start border-4 @GetBorderColorClass(subject.Type)">
+                                                        <div class="card-body">
+                                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                                <h6 class="card-title mb-1">@subject.Name</h6>
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                                        <i class="fas fa-ellipsis-v"></i>
+                                                                    </button>
+                                                                    <ul class="dropdown-menu">
+                                                                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@subject.Id"><i class="fas fa-eye"></i> Details</a></li>
+                                                                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@subject.Id"><i class="fas fa-edit"></i> Edit</a></li>
+                                                                        <li><a class="dropdown-item" asp-action="AssignTeacher" asp-route-id="@subject.Id"><i class="fas fa-user-plus"></i> Assign Teacher</a></li>
+                                                                        <li><hr class="dropdown-divider"></li>
+                                                                        <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@subject.Id"><i class="fas fa-trash"></i> Delete</a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <p class="text-muted small mb-2">
+                                                                <strong>Code:</strong> @subject.Code | 
+                                                                <strong>Credits:</strong> @subject.Credits
+                                                            </p>
+                                                            <div class="mb-2">
+                                                                @switch(subject.Type)
+                                                                {
+                                                                    case SchoolManagementSystem.Models.SubjectType.Compulsory:
+                                                                        <span class="badge bg-primary">Core Subject</span>
+                                                                        break;
+                                                                    case SchoolManagementSystem.Models.SubjectType.Elective:
+                                                                        <span class="badge bg-secondary">Elective</span>
+                                                                        break;
+                                                                    case SchoolManagementSystem.Models.SubjectType.Optional:
+                                                                        <span class="badge bg-light text-dark">Optional</span>
+                                                                        break;
+                                                                }
+                                                                @if (subject.IsActive)
+                                                                {
+                                                                    <span class="badge bg-success ms-1">Active</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="badge bg-danger ms-1">Inactive</span>
+                                                                }
+                                                            </div>
+                                                            <p class="card-text small">@subject.Description</p>
+                                                        </div>
+                                                        <div class="card-footer bg-light">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <small class="text-muted">
+                                                                    @(subject.TeacherSubjects?.Count() ?? 0) teachers assigned
+                                                                </small>
+                                                                <div class="btn-group btn-group-sm">
+                                                                    <a class="btn btn-outline-primary" asp-action="Details" asp-route-id="@subject.Id" title="View Details">
+                                                                        <i class="fas fa-eye"></i>
+                                                                    </a>
+                                                                    <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@subject.Id" title="Edit Subject">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Subjects Found</h5>
+                            <p class="text-muted">No subjects match your current filter criteria.</p>
+                            <a class="btn btn-primary" asp-action="Create">
+                                <i class="fas fa-plus"></i> Add First Subject
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetBorderColorClass(SchoolManagementSystem.Models.SubjectType type)
+    {
+        return type switch
+        {
+            SchoolManagementSystem.Models.SubjectType.Compulsory => "border-primary",
+            SchoolManagementSystem.Models.SubjectType.Elective => "border-secondary", 
+            SchoolManagementSystem.Models.SubjectType.Optional => "border-warning",
+            _ => "border-light"
+        };
+    }
+}
