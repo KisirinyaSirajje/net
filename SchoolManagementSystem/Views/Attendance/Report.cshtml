@@ -1,0 +1,424 @@
+@model IEnumerable<SchoolManagementSystem.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Attendance Reports";
+    var reportStats = ViewBag.ReportStats as dynamic;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Attendance</a></li>
+                    <li class="breadcrumb-item active">Reports</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Attendance Reports Dashboard
+                    </h4>
+                    <small>Comprehensive attendance analysis and statistics</small>
+                </div>
+                <div class="card-body">
+                    <!-- Report Filter Options -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fas fa-filter"></i> Report Filters</h6>
+                        </div>
+                        <div class="card-body">
+                            <form method="get" asp-action="Report">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-label">From Date:</label>
+                                        <input type="date" name="startDate" value="@ViewBag.StartDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">To Date:</label>
+                                        <input type="date" name="endDate" value="@ViewBag.EndDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Course:</label>
+                                        <select name="courseId" class="form-select">
+                                            <option value="">All Courses</option>
+                                            @if (ViewBag.Courses != null)
+                                            {
+                                                @foreach (var course in ViewBag.Courses as IEnumerable<SchoolManagementSystem.Models.Course>)
+                                                {
+                                                    <option value="@course.Id" selected="@(ViewBag.CourseId?.ToString() == course.Id.ToString())">
+                                                        @course.CourseName (@course.Subject?.Name)
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-search"></i> Generate Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Overall Statistics -->
+                    <div class="row mb-4">
+                        <div class="col-md-2">
+                            <div class="card bg-primary text-white text-center">
+                                <div class="card-body">
+                                    <h3>@reportStats?.TotalRecords</h3>
+                                    <small>Total Records</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-success text-white text-center">
+                                <div class="card-body">
+                                    <h3>@reportStats?.TotalPresent</h3>
+                                    <small>Present</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-danger text-white text-center">
+                                <div class="card-body">
+                                    <h3>@reportStats?.TotalAbsent</h3>
+                                    <small>Absent</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-warning text-white text-center">
+                                <div class="card-body">
+                                    <h3>@reportStats?.TotalLate</h3>
+                                    <small>Late</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-info text-white text-center">
+                                <div class="card-body">
+                                    <h3>@reportStats?.TotalExcused</h3>
+                                    <small>Excused</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-secondary text-white text-center">
+                                <div class="card-body">
+                                    <h3>@(reportStats?.OverallRate)%</h3>
+                                    <small>Overall Rate</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <!-- Course-wise Summary -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-chalkboard-teacher"></i> Course-wise Attendance</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>Course</th>
+                                                        <th>Total</th>
+                                                        <th>Rate</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        var courseSummary = Model.GroupBy(a => new { a.CourseId, a.Course?.CourseName, a.Course?.Subject?.Name })
+                                                                                 .Select(g => new {
+                                                                                     CourseId = g.Key.CourseId,
+                                                                                     CourseName = g.Key.CourseName,
+                                                                                     SubjectName = g.Key.Name,
+                                                                                     Total = g.Count(),
+                                                                                     Present = g.Count(a => a.Status == "Present"),
+                                                                                     Rate = Math.Round(((double)g.Count(a => a.Status == "Present" || a.Status == "Late") / g.Count()) * 100, 1)
+                                                                                 })
+                                                                                 .OrderByDescending(c => c.Rate)
+                                                                                 .ToList();
+                                                    }
+                                                    @foreach (var course in courseSummary)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <strong>@course.CourseName</strong>
+                                                                <br><small class="text-muted">@course.SubjectName</small>
+                                                            </td>
+                                                            <td><span class="badge bg-primary">@course.Total</span></td>
+                                                            <td>
+                                                                <strong class="@GetRateColorClass(course.Rate)">@course.Rate%</strong>
+                                                            </td>
+                                                            <td>
+                                                                <a class="btn btn-sm btn-outline-primary" 
+                                                                   asp-action="Course" asp-route-courseId="@course.CourseId">
+                                                                    <i class="fas fa-chart-line"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top/Bottom Performers -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-users"></i> Student Performance</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        @{
+                                            var studentPerformance = Model.GroupBy(a => new { a.StudentId, a.Student?.FullName })
+                                                                          .Select(g => new {
+                                                                              StudentId = g.Key.StudentId,
+                                                                              StudentName = g.Key.FullName,
+                                                                              Total = g.Count(),
+                                                                              Present = g.Count(a => a.Status == "Present"),
+                                                                              Rate = Math.Round(((double)g.Count(a => a.Status == "Present" || a.Status == "Late") / g.Count()) * 100, 1)
+                                                                          })
+                                                                          .OrderByDescending(s => s.Rate)
+                                                                          .ToList();
+                                        }
+
+                                        <!-- Top Performers -->
+                                        <h6 class="text-success"><i class="fas fa-trophy"></i> Top Performers</h6>
+                                        <div class="mb-3">
+                                            @foreach (var student in studentPerformance.Take(5))
+                                            {
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <div>
+                                                        <strong>@student.StudentName</strong>
+                                                        <br><small class="text-muted">@student.Total classes</small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <span class="badge @GetRateBadgeClass(student.Rate)">@student.Rate%</span>
+                                                        <br>
+                                                        <a class="btn btn-sm btn-outline-info" 
+                                                           asp-action="Student" asp-route-studentId="@student.StudentId">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-2">
+                                            }
+                                        </div>
+
+                                        <!-- Students Needing Attention -->
+                                        <h6 class="text-warning"><i class="fas fa-exclamation-triangle"></i> Needs Attention</h6>
+                                        <div>
+                                            @foreach (var student in studentPerformance.Where(s => s.Rate < 75).Take(5))
+                                            {
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <div>
+                                                        <strong>@student.StudentName</strong>
+                                                        <br><small class="text-muted">@student.Total classes</small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <span class="badge @GetRateBadgeClass(student.Rate)">@student.Rate%</span>
+                                                        <br>
+                                                        <a class="btn btn-sm btn-outline-warning" 
+                                                           asp-action="Student" asp-route-studentId="@student.StudentId">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <hr class="my-2">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Attendance Trend -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-calendar-alt"></i> Daily Attendance Trend</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Total Students</th>
+                                                <th>Present</th>
+                                                <th>Absent</th>
+                                                <th>Late</th>
+                                                <th>Attendance Rate</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                var dailyTrend = Model.GroupBy(a => a.AttendanceDate.Date)
+                                                                     .Select(g => new {
+                                                                         Date = g.Key,
+                                                                         Total = g.Count(),
+                                                                         Present = g.Count(a => a.Status == "Present"),
+                                                                         Absent = g.Count(a => a.Status == "Absent"),
+                                                                         Late = g.Count(a => a.Status == "Late"),
+                                                                         Rate = Math.Round(((double)g.Count(a => a.Status == "Present" || a.Status == "Late") / g.Count()) * 100, 1)
+                                                                     })
+                                                                     .OrderByDescending(d => d.Date)
+                                                                     .Take(10)
+                                                                     .ToList();
+                                            }
+                                            @foreach (var day in dailyTrend)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@day.Date.ToString("MMM dd, yyyy")</strong>
+                                                        <br><small class="text-muted">@day.Date.ToString("dddd")</small>
+                                                    </td>
+                                                    <td><span class="badge bg-secondary">@day.Total</span></td>
+                                                    <td><span class="badge bg-success">@day.Present</span></td>
+                                                    <td><span class="badge bg-danger">@day.Absent</span></td>
+                                                    <td><span class="badge bg-warning">@day.Late</span></td>
+                                                    <td><strong class="@GetRateColorClass(day.Rate)">@day.Rate%</strong></td>
+                                                    <td>
+                                                        @if (day.Rate >= 90)
+                                                        {
+                                                            <span class="badge bg-success">Excellent</span>
+                                                        }
+                                                        else if (day.Rate >= 75)
+                                                        {
+                                                            <span class="badge bg-warning">Good</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-danger">Needs Attention</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center my-4">
+                            <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Data Available</h5>
+                            <p class="text-muted">No attendance records found for the selected criteria. Adjust your filters and try again.</p>
+                            <a class="btn btn-primary" asp-action="Index">
+                                <i class="fas fa-arrow-left"></i> Back to Attendance
+                            </a>
+                        </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <div>
+                            <a class="btn btn-secondary" asp-action="Index">
+                                <i class="fas fa-arrow-left"></i> Back to Attendance List
+                            </a>
+                        </div>
+                        <div>
+                            @if (Model != null && Model.Any())
+                            {
+                                <button class="btn btn-outline-primary" onclick="window.print()">
+                                    <i class="fas fa-print"></i> Print Report
+                                </button>
+                                <button class="btn btn-success" onclick="exportToCSV()">
+                                    <i class="fas fa-download"></i> Export CSV
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetRateColorClass(double rate)
+    {
+        if (rate >= 90) return "text-success";
+        if (rate >= 75) return "text-warning";
+        return "text-danger";
+    }
+
+    string GetRateBadgeClass(double rate)
+    {
+        if (rate >= 90) return "bg-success";
+        if (rate >= 75) return "bg-warning";
+        return "bg-danger";
+    }
+}
+
+@section Scripts {
+    <script>
+        function exportToCSV() {
+            // Simple CSV export functionality
+            const table = document.querySelector('.table');
+            if (!table) return;
+            
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('td, th');
+                const rowData = Array.from(cols).map(col => {
+                    return '"' + col.innerText.replace(/"/g, '""') + '"';
+                });
+                csv.push(rowData.join(','));
+            });
+            
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = 'attendance_report_' + new Date().toISOString().split('T')[0] + '.csv';
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+}
+
+@section Styles {
+    <style>
+        @@media print {
+            .btn, .card-header, nav, .no-print {
+                display: none !important;
+            }
+            
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+            
+            .card-body {
+                padding: 10px !important;
+            }
+        }
+    </style>
+}

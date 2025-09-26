@@ -1,0 +1,415 @@
+@model IEnumerable<SchoolManagementSystem.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Course Attendance Report";
+    var course = ViewBag.Course as SchoolManagementSystem.Models.Course;
+    var attendanceStats = ViewBag.AttendanceStats as dynamic;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Attendance</a></li>
+                    <li class="breadcrumb-item active">Course Report</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chalkboard-teacher"></i> Course Attendance Report
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="mb-0">@course?.CourseName</h5>
+                            <small>Subject: @course?.Subject?.Name | Teacher: @course?.Teacher?.FullName</small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <small>Generated: @DateTime.Now.ToString("MMM dd, yyyy")</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Overall Statistics -->
+                    <div class="row mb-4">
+                        <div class="col-md-2">
+                            <div class="card bg-info text-white text-center">
+                                <div class="card-body">
+                                    <h4>@attendanceStats?.TotalStudents</h4>
+                                    <small>Total Students</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-success text-white text-center">
+                                <div class="card-body">
+                                    <h4>@attendanceStats?.TotalPresent</h4>
+                                    <small>Total Present</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-danger text-white text-center">
+                                <div class="card-body">
+                                    <h4>@attendanceStats?.TotalAbsent</h4>
+                                    <small>Total Absent</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-warning text-white text-center">
+                                <div class="card-body">
+                                    <h4>@attendanceStats?.TotalLate</h4>
+                                    <small>Total Late</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-secondary text-white text-center">
+                                <div class="card-body">
+                                    <h4>@attendanceStats?.TotalClasses</h4>
+                                    <small>Total Classes</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card bg-dark text-white text-center">
+                                <div class="card-body">
+                                    <h4>@(attendanceStats?.AttendanceRate)%</h4>
+                                    <small>Attendance Rate</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Form -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fas fa-filter"></i> Filter Options</h6>
+                        </div>
+                        <div class="card-body">
+                            <form method="get" asp-action="Course">
+                                <input type="hidden" name="courseId" value="@course?.Id" />
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-label">From Date:</label>
+                                        <input type="date" name="startDate" value="@ViewBag.StartDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">To Date:</label>
+                                        <input type="date" name="endDate" value="@ViewBag.EndDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Status:</label>
+                                        <select name="status" class="form-select">
+                                            <option value="">All Statuses</option>
+                                            <option value="Present" selected="@(ViewBag.Status == "Present")">Present</option>
+                                            <option value="Absent" selected="@(ViewBag.Status == "Absent")">Absent</option>
+                                            <option value="Late" selected="@(ViewBag.Status == "Late")">Late</option>
+                                            <option value="Excused" selected="@(ViewBag.Status == "Excused")">Excused</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-search"></i> Filter
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Records by Date -->
+                    @if (Model.Any())
+                    {
+                        var attendanceByDate = Model.GroupBy(a => a.AttendanceDate.Date)
+                                                   .OrderByDescending(g => g.Key)
+                                                   .ToList();
+
+                        <div class="accordion" id="attendanceAccordion">
+                            @for (int i = 0; i < attendanceByDate.Count; i++)
+                            {
+                                var dateGroup = attendanceByDate[i];
+                                var date = dateGroup.Key;
+                                var records = dateGroup.ToList();
+                                var presentCount = records.Count(r => r.Status == "Present");
+                                var absentCount = records.Count(r => r.Status == "Absent");
+                                var lateCount = records.Count(r => r.Status == "Late");
+                                var excusedCount = records.Count(r => r.Status == "Excused");
+                                var attendanceRate = Math.Round(((double)(presentCount + lateCount) / records.Count) * 100, 1);
+
+                                <div class="card mb-2">
+                                    <div class="card-header" id="heading@(i)">
+                                        <h6 class="mb-0">
+                                            <button class="btn btn-link text-decoration-none w-100 text-start" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse@(i)" 
+                                                    aria-expanded="@(i == 0 ? "true" : "false")" aria-controls="collapse@(i)">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-3">
+                                                        <strong>@date.ToString("MMMM dd, yyyy")</strong>
+                                                        <br><small class="text-muted">@date.ToString("dddd")</small>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="row text-center">
+                                                            <div class="col-3">
+                                                                <span class="badge bg-success">@presentCount Present</span>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <span class="badge bg-danger">@absentCount Absent</span>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <span class="badge bg-warning">@lateCount Late</span>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <span class="badge bg-info">@excusedCount Excused</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 text-end">
+                                                        <h5 class="@GetRateColorClass(attendanceRate) mb-0">@attendanceRate%</h5>
+                                                        <small>Attendance Rate</small>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </h6>
+                                    </div>
+                                    <div id="collapse@(i)" class="collapse @(i == 0 ? "show" : "")" 
+                                         aria-labelledby="heading@(i)" data-bs-parent="#attendanceAccordion">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-striped">
+                                                    <thead class="table-dark">
+                                                        <tr>
+                                                            <th width="5%">#</th>
+                                                            <th width="35%">Student Name</th>
+                                                            <th width="15%">Status</th>
+                                                            <th width="15%">Check-in Time</th>
+                                                            <th width="30%">Notes</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int studentIndex = 0;
+                                                        }
+                                                        @foreach (var attendance in records.OrderBy(r => r.Student?.FullName))
+                                                        {
+                                                            <tr class="@GetRowClass(attendance.Status)">
+                                                                <td>@(++studentIndex)</td>
+                                                                <td>
+                                                                    <strong>@attendance.Student?.FullName</strong>
+                                                                    <br><small class="text-muted">ID: @attendance.Student?.StudentId</small>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge @GetStatusBadgeClass(attendance.Status)">
+                                                                        @attendance.Status
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    @if (attendance.CheckInTime.HasValue)
+                                                                    {
+                                                                        @attendance.CheckInTime.Value.ToString("HH:mm")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-muted">-</span>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @if (!string.IsNullOrEmpty(attendance.Notes))
+                                                                    {
+                                                                        <small>@attendance.Notes</small>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-muted">-</span>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <a class="btn btn-sm btn-outline-primary" 
+                                                   asp-action="Take" 
+                                                   asp-route-courseId="@course?.Id" 
+                                                   asp-route-attendanceDate="@date.ToString("yyyy-MM-dd")">
+                                                    <i class="fas fa-edit"></i> Edit Attendance
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Student Summary -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-users"></i> Student Attendance Summary</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Student Name</th>
+                                                <th>Total Classes</th>
+                                                <th>Present</th>
+                                                <th>Absent</th>
+                                                <th>Late</th>
+                                                <th>Excused</th>
+                                                <th>Attendance Rate</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                var studentSummary = Model.GroupBy(a => new { a.StudentId, a.Student?.FullName, StudentNumber = a.Student?.StudentId })
+                                                                          .Select(g => new {
+                                                                              StudentId = g.Key.StudentId,
+                                                                              StudentName = g.Key.FullName,
+                                                                              StudentNumber = g.Key.StudentNumber,
+                                                                              TotalClasses = g.Count(),
+                                                                              Present = g.Count(a => a.Status == "Present"),
+                                                                              Absent = g.Count(a => a.Status == "Absent"),
+                                                                              Late = g.Count(a => a.Status == "Late"),
+                                                                              Excused = g.Count(a => a.Status == "Excused"),
+                                                                              AttendanceRate = Math.Round(((double)g.Count(a => a.Status == "Present" || a.Status == "Late") / g.Count()) * 100, 1)
+                                                                          })
+                                                                          .OrderBy(s => s.StudentName)
+                                                                          .ToList();
+                                            }
+                                            @foreach (var summary in studentSummary)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@summary.StudentName</strong>
+                                                        <br><small class="text-muted">ID: @summary.StudentNumber</small>
+                                                    </td>
+                                                    <td><span class="badge bg-secondary">@summary.TotalClasses</span></td>
+                                                    <td><span class="badge bg-success">@summary.Present</span></td>
+                                                    <td><span class="badge bg-danger">@summary.Absent</span></td>
+                                                    <td><span class="badge bg-warning">@summary.Late</span></td>
+                                                    <td><span class="badge bg-info">@summary.Excused</span></td>
+                                                    <td>
+                                                        <h6 class="@GetRateColorClass(summary.AttendanceRate) mb-0">
+                                                            @summary.AttendanceRate%
+                                                        </h6>
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-sm btn-outline-info" 
+                                                           asp-action="Student" 
+                                                           asp-route-studentId="@summary.StudentId">
+                                                            <i class="fas fa-chart-line"></i> View Report
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center my-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Attendance Records Found</h5>
+                            <p class="text-muted">No attendance records found for this course in the selected date range.</p>
+                            <a class="btn btn-primary" asp-action="Take" asp-route-courseId="@course?.Id">
+                                <i class="fas fa-plus"></i> Take Attendance
+                            </a>
+                        </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <div>
+                            <a class="btn btn-secondary" asp-action="Index">
+                                <i class="fas fa-arrow-left"></i> Back to Attendance List
+                            </a>
+                        </div>
+                        <div>
+                            @if (Model.Any())
+                            {
+                                <button class="btn btn-outline-primary" onclick="window.print()">
+                                    <i class="fas fa-print"></i> Print Report
+                                </button>
+                                <a class="btn btn-success" asp-controller="Courses" asp-action="Details" asp-route-id="@course?.Id">
+                                    <i class="fas fa-chalkboard-teacher"></i> View Course Details
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetRowClass(string status)
+    {
+        return status switch
+        {
+            "Present" => "",
+            "Late" => "table-warning",
+            "Absent" => "table-danger",
+            "Excused" => "table-info",
+            _ => ""
+        };
+    }
+
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Present" => "bg-success",
+            "Late" => "bg-warning",
+            "Absent" => "bg-danger",
+            "Excused" => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetRateColorClass(double rate)
+    {
+        if (rate >= 90) return "text-success";
+        if (rate >= 75) return "text-warning";
+        return "text-danger";
+    }
+}
+
+@section Styles {
+    <style>
+        @@media print {
+            .btn, .card-header, nav, .no-print, .collapse:not(.show) {
+                display: none !important;
+            }
+            
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+            
+            .card-body {
+                padding: 10px !important;
+            }
+            
+            .collapse.show {
+                display: block !important;
+            }
+        }
+    </style>
+}

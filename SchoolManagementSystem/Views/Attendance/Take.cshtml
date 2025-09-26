@@ -1,0 +1,316 @@
+@model IEnumerable<SchoolManagementSystem.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Take Attendance";
+    var course = ViewBag.Course as SchoolManagementSystem.Models.Course;
+    var attendanceDate = (DateTime)ViewBag.AttendanceDate;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Attendance</a></li>
+                    <li class="breadcrumb-item active">Take Attendance</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-clipboard-check"></i> Take Attendance
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small><strong>Course:</strong> @course?.CourseName (@course?.Subject?.Name)</small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <small><strong>Date:</strong> @attendanceDate.ToString("MMMM dd, yyyy (dddd)")</small>
+                        </div>
+                    </div>
+                    @if (course?.Teacher != null)
+                    {
+                        <small><strong>Teacher:</strong> @course.Teacher.FullName</small>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <form asp-action="Take" method="post">
+                            <input type="hidden" name="courseId" value="@course?.Id" />
+                            <input type="hidden" name="attendanceDate" value="@attendanceDate.ToString("yyyy-MM-dd")" />
+                            
+                            <!-- Quick Actions -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="btn-toolbar" role="toolbar">
+                                        <div class="btn-group me-2" role="group">
+                                            <button type="button" class="btn btn-success btn-sm" onclick="markAll('Present')">
+                                                <i class="fas fa-check"></i> Mark All Present
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="markAll('Absent')">
+                                                <i class="fas fa-times"></i> Mark All Absent
+                                            </button>
+                                        </div>
+                                        <div class="btn-group me-2" role="group">
+                                            <button type="button" class="btn btn-info btn-sm" onclick="setCurrentTime()">
+                                                <i class="fas fa-clock"></i> Set Current Time
+                                            </button>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Save Attendance
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Attendance List -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th width="5%">#</th>
+                                            <th width="30%">Student Name</th>
+                                            <th width="20%">Status</th>
+                                            <th width="15%">Check-in Time</th>
+                                            <th width="30%">Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int index = 0;
+                                        }
+                                        @foreach (var attendance in Model)
+                                        {
+                                            <tr class="attendance-row">
+                                                <td>@(++index)</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div>
+                                                            <strong>@attendance.Student?.FullName</strong>
+                                                            <br>
+                                                            <small class="text-muted">ID: @attendance.Student?.StudentId</small>
+                                                        </div>
+                                                    </div>
+                                                    <input type="hidden" name="attendances[@(index-1)].StudentId" value="@attendance.StudentId" />
+                                                    @if (attendance.Id > 0)
+                                                    {
+                                                        <input type="hidden" name="attendances[@(index-1)].Id" value="@attendance.Id" />
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <select name="attendances[@(index-1)].Status" class="form-select status-select" onchange="updateRowStatus(this)">
+                                                        <option value="Present" selected="@(attendance.Status == "Present")">Present</option>
+                                                        <option value="Absent" selected="@(attendance.Status == "Absent")">Absent</option>
+                                                        <option value="Late" selected="@(attendance.Status == "Late")">Late</option>
+                                                        <option value="Excused" selected="@(attendance.Status == "Excused")">Excused</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="time" name="attendances[@(index-1)].CheckInTime" 
+                                                           value="@(attendance.CheckInTime?.ToString("HH:mm"))" 
+                                                           class="form-control checkin-time" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="attendances[@(index-1)].Notes" 
+                                                           value="@attendance.Notes" 
+                                                           class="form-control" 
+                                                           placeholder="Optional notes..." />
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Summary -->
+                            <div class="row mt-3">
+                                <div class="col-md-8">
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Attendance Summary</h6>
+                                            <div class="row text-center">
+                                                <div class="col-3">
+                                                    <div class="text-success">
+                                                        <strong id="present-count">@Model.Count(a => a.Status == "Present")</strong>
+                                                        <br><small>Present</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="text-danger">
+                                                        <strong id="absent-count">@Model.Count(a => a.Status == "Absent")</strong>
+                                                        <br><small>Absent</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="text-warning">
+                                                        <strong id="late-count">@Model.Count(a => a.Status == "Late")</strong>
+                                                        <br><small>Late</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    <div class="text-info">
+                                                        <strong id="excused-count">@Model.Count(a => a.Status == "Excused")</strong>
+                                                        <br><small>Excused</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center">
+                                            <h5 id="attendance-rate">@Math.Round(((double)Model.Count(a => a.Status == "Present" || a.Status == "Late") / Model.Count()) * 100, 1)%</h5>
+                                            <small>Attendance Rate</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <div>
+                                    <a class="btn btn-secondary" asp-action="Index" asp-route-date="@attendanceDate.ToString("yyyy-MM-dd")">
+                                        <i class="fas fa-arrow-left"></i> Back to Attendance List
+                                    </a>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">
+                                        <i class="fas fa-undo"></i> Reset
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Attendance
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="text-center my-4">
+                            <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Students Enrolled</h5>
+                            <p class="text-muted">There are no students enrolled in this course.</p>
+                            <a class="btn btn-primary" asp-controller="Courses" asp-action="Details" asp-route-id="@course?.Id">
+                                <i class="fas fa-eye"></i> View Course Details
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function markAll(status) {
+            const statusSelects = document.querySelectorAll('.status-select');
+            statusSelects.forEach(select => {
+                select.value = status;
+                updateRowStatus(select);
+            });
+            updateSummary();
+        }
+
+        function setCurrentTime() {
+            const now = new Date();
+            const timeString = now.toTimeString().slice(0, 5); // HH:MM format
+            const timeInputs = document.querySelectorAll('.checkin-time');
+            const statusSelects = document.querySelectorAll('.status-select');
+            
+            timeInputs.forEach((input, index) => {
+                const status = statusSelects[index].value;
+                if (status === 'Present' || status === 'Late') {
+                    input.value = timeString;
+                }
+            });
+        }
+
+        function updateRowStatus(selectElement) {
+            const row = selectElement.closest('.attendance-row');
+            const timeInput = row.querySelector('.checkin-time');
+            const status = selectElement.value;
+            
+            // Auto-set time for Present and Late status
+            if ((status === 'Present' || status === 'Late') && !timeInput.value) {
+                const now = new Date();
+                timeInput.value = now.toTimeString().slice(0, 5);
+            }
+            
+            // Clear time for Absent and Excused status
+            if (status === 'Absent' || status === 'Excused') {
+                timeInput.value = '';
+            }
+            
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const statusSelects = document.querySelectorAll('.status-select');
+            let presentCount = 0, absentCount = 0, lateCount = 0, excusedCount = 0;
+            
+            statusSelects.forEach(select => {
+                switch(select.value) {
+                    case 'Present': presentCount++; break;
+                    case 'Absent': absentCount++; break;
+                    case 'Late': lateCount++; break;
+                    case 'Excused': excusedCount++; break;
+                }
+            });
+            
+            document.getElementById('present-count').textContent = presentCount;
+            document.getElementById('absent-count').textContent = absentCount;
+            document.getElementById('late-count').textContent = lateCount;
+            document.getElementById('excused-count').textContent = excusedCount;
+            
+            const total = statusSelects.length;
+            const attendanceRate = total > 0 ? Math.round(((presentCount + lateCount) / total) * 100 * 10) / 10 : 0;
+            document.getElementById('attendance-rate').textContent = attendanceRate + '%';
+        }
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset all attendance data? This will revert to the original state.')) {
+                location.reload();
+            }
+        }
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelects = document.querySelectorAll('.status-select');
+            statusSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    updateRowStatus(this);
+                });
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey) {
+                switch(e.key) {
+                    case 's': // Ctrl+S to save
+                        e.preventDefault();
+                        document.querySelector('form').submit();
+                        break;
+                    case 'a': // Ctrl+A to mark all present
+                        e.preventDefault();
+                        markAll('Present');
+                        break;
+                    case 't': // Ctrl+T to set current time
+                        e.preventDefault();
+                        setCurrentTime();
+                        break;
+                }
+            }
+        });
+    </script>
+}
